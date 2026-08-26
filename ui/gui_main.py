@@ -1,9 +1,25 @@
 import tkinter as tk
+from tkinter import simpledialog
 
+from company_class import Company
+from create_product import ProductCreator
 from player_class import Player
 from stock_market import StockMarket
 from ui.gui_components import make_button, write_to_textbox
 from ui.gui_ticker import build_ticker
+
+SECTOR_STARTUP_COSTS = {
+    "Technology": 250000,
+    "Finance": 150000,
+    "Healthcare": 200000,
+    "Energy": 300000,
+    "Retail": 75000,
+    "Automotive": 275000,
+    "Food": 50000,
+    "Media": 100000,
+    "Aerospace": 400000,
+    "Industrial": 225000,
+}
 
 
 def launch():
@@ -31,6 +47,8 @@ def launch():
     sidebar_window = sidebar_canvas.create_window((0, 0), window=sidebar, anchor="nw")
 
     def update_sidebar_scroll(_event=None):
+        if _event is not None:
+            del _event
         sidebar_canvas.configure(scrollregion=sidebar_canvas.bbox("all"))
 
     def resize_sidebar(event):
@@ -61,6 +79,7 @@ def launch():
 
     def show_text(message):
         stock_panel.pack_forget()
+        company_panel.pack_forget()
         textbox.pack(fill="both", expand=True)
         write_to_textbox(textbox, message)
 
@@ -80,13 +99,417 @@ def launch():
         refresh_header()
         if current_page == "finances":
             show_finances()
+        elif current_page in {"company", "company_menu"}:
+            show_company_summary()
         elif current_page == "stocks":
             if current_view == "portfolio":
                 show_portfolio()
             else:
                 populate_stocks(active_sector.get())
 
+    def create_company_gui():
+        if player.company is not None:
+            show_text(f"You already own {player.company.name}.")
+            return
+
+        name = simpledialog.askstring("Create Company", "Enter company name:")
+        if not name or not name.strip():
+            show_text("Company name cannot be empty.")
+            return
+
+        sectors = sorted(set(ProductCreator.load_catalog().keys()) | set(SECTOR_STARTUP_COSTS.keys()))
+        sector_list = "\n".join(f"{i + 1}. {sector}" for i, sector in enumerate(sectors))
+        sector_choice = simpledialog.askstring("Create Company", f"Choose a sector:\n{sector_list}\n\nEnter a number:")
+        if sector_choice is None:
+            return
+
+        try:
+            sector_index = int(sector_choice.strip())
+        except ValueError:
+            sector_name = sector_choice.strip().title()
+            if sector_name not in sectors:
+                show_text("That sector is not available.")
+                return
+            sector = sector_name
+        else:
+            if sector_index < 1 or sector_index > len(sectors):
+                show_text("Invalid sector selection.")
+                return
+            sector = sectors[sector_index - 1]
+
+        startup_cost = SECTOR_STARTUP_COSTS.get(sector, 50000)
+        if player.bank < startup_cost:
+            show_text(f"You need at least ${startup_cost:,.2f} in your bank account to start a {sector} company.")
+            return
+
+        company = Company(name.strip(), sector)
+        company.cash = startup_cost
+        company.capital_invested = startup_cost
+        player.company = company
+        player.bank -= startup_cost
+        show_company_summary()
+
+    def show_company_summary():
+        nonlocal current_page
+        target_page = current_page
+        current_page = "company"
+        current_company = player.company
+        if current_company is None:
+            if target_page == "company_menu":
+                refresh_company_summary_panel()
+                return
+            show_text("You do not own a company yet.\nUse the Create Company button in the sidebar.")
+            return
+
+        if target_page == "company_menu":
+            refresh_company_summary_panel()
+            return
+
+        summary = current_company.get_financial_summary()
+        lines = [
+            f"Company: {current_company.name}",
+            f"Sector: {current_company.sector}",
+            f"Cash: ${summary['cash']:,.2f}",
+            f"Revenue: ${summary['revenue']:,.2f}",
+            f"Expenses: ${summary['expenses']:,.2f}",
+            f"Net income: ${summary['net_income']:,.2f}",
+            f"Debt: ${summary['debt']:,.2f}",
+            f"Capital invested: ${summary['capital_invested']:,.2f}",
+            f"Units sold: {summary['total_units_sold']}",
+            f"Unsold units: {summary['total_units_unsold']}",
+            f"Inventory: {summary['total_inventory']}",
+            "",
+            "Products:",
+        ]
+        if current_company.products:
+            for product in current_company.products:
+                lines.append(
+                    f"- {product.name} | Price: ${product.sale_price:,.2f} | "
+                    f"Production: {product.production_target} | Sold: {product.units_sold} | "
+                    f"Inventory: {product.inventory} | Revenue: ${product.monthly_revenue:,.2f} | "
+                    f"Profit: ${product.monthly_profit:,.2f}"
+                )
+        else:
+            lines.append("- No products launched yet.")
+        show_text("\n".join(lines))
+
+    def confirm_yes_no(prompt_title, prompt_text):
+        response = simpledialog.askstring(prompt_title, prompt_text, parent=root)
+        if response is None:
+            return False
+        return response.strip().lower() == "y"
+
+    def can_afford_production(company, product, units):
+        if units <= 0:
+            return True
+        return company.cash >= (units * product.manufacturing_cost)
+
+    def research_and_launch_product():
+        if player.company is None:
+            show_text("Create a company first.")
+            return
+
+        company = player.company
+        sector_products = ProductCreator.load_sector_products(company.sector)
+        if not sector_products:
+            show_text("No products are available for this sector.")
+            return
+
+        options = "\n".join(
+            f"{i + 1}. {product.name} | {'researched' if product.researched else f'research ${product.research_cost:,.2f}'}"
+            for i, product in enumerate(sector_products)
+        )
+        selection = simpledialog.askstring("Research Product", f"Select a product:\n{options}\n\nEnter a number:")
+        if selection is None:
+            return
+
+        try:
+            index = int(selection.strip()) - 1
+        except ValueError:
+            show_text("Please enter a valid product number.")
+            return
+
+        if index < 0 or index >= len(sector_products):
+            show_text("Invalid product selection.")
+            return
+
+        chosen = sector_products[index]
+        if chosen.researched:
+            if any(product.name == chosen.name for product in company.products):
+                show_text(f"{chosen.name} is already in your product lineup.")
+            elif confirm_yes_no("Launch Product", f"{chosen.name} is already researched. Launch it now? (y/n): "):
+                company.add_product(chosen)
+                show_company_summary()
+            else:
+                show_company_summary()
+            return
+
+        if company.cash < chosen.research_cost:
+            show_text(f"You need ${chosen.research_cost:,.2f} to research {chosen.name}.")
+            return
+
+        company.cash -= chosen.research_cost
+        chosen.research(company.cash)
+        details = (
+            f"{chosen.name} is now researched.\n"
+            f"Demand: {chosen.base_demand}/10\n"
+            f"Competition: {chosen.competition}/10\n"
+            f"Manufacturing cost: ${chosen.manufacturing_cost:,.2f}"
+        )
+        if confirm_yes_no("Launch Product", f"{details}\n\nLaunch this product now? (y/n): "):
+            company.add_product(chosen)
+            show_text(f"{chosen.name} was added to your product lineup.\n\n{details}")
+        else:
+            show_text(details)
+
+    def manage_company_products():
+        if player.company is None:
+            show_text("Create a company first.")
+            return
+
+        company = player.company
+        if not company.products:
+            show_text("You have no products added yet. Research a product first.")
+            return
+
+        options = "\n".join(
+            f"{i + 1}. {product.name} | price ${product.sale_price:,.2f} | target {product.production_target} | inventory {product.inventory}"
+            for i, product in enumerate(company.products)
+        )
+        action_raw = simpledialog.askstring("Manage Products", f"Select a product action:\n{options}\n\n1. Set production\n2. Set sale price\nEnter action number:")
+        if action_raw is None:
+            return
+
+        action_value = action_raw.strip()
+        if not action_value:
+            show_text("Please enter a valid number.")
+            return
+
+        try:
+            action_choice = int(action_value)
+        except ValueError:
+            show_text("Please enter a valid number.")
+            return
+
+        if 1 <= action_choice <= len(company.products):
+            selected_product = company.products[action_choice - 1]
+            method_raw = simpledialog.askstring("Manage Products", "1. Set production\n2. Set sale price\n\nChoose an option:")
+            if method_raw is None:
+                return
+
+            method_value = method_raw.strip()
+            if method_value == "1":
+                amount_raw = simpledialog.askstring("Production Target", f"How many units of {selected_product.name} should be produced this month?")
+                if amount_raw is None:
+                    return
+                try:
+                    target = int(amount_raw)
+                except (TypeError, ValueError):
+                    show_text("Please enter a valid unit count.")
+                    return
+                if target < 0:
+                    show_text("Production target cannot be negative.")
+                    return
+                required_capital = target * selected_product.manufacturing_cost
+                if not can_afford_production(company, selected_product, target):
+                    show_text(
+                        f"Not enough capital to produce {target} units of {selected_product.name}. "
+                        f"This would cost ${required_capital:,.2f}, but your company has ${company.cash:,.2f}."
+                    )
+                    return
+                selected_product.set_month_plan(target)
+                show_text(f"{selected_product.name} production target set to {selected_product.production_target} units.")
+            elif method_value == "2":
+                price_raw = simpledialog.askstring("Sale Price", f"Set the sale price for {selected_product.name}: ")
+                if price_raw is None:
+                    return
+                try:
+                    new_price = float(price_raw)
+                except (TypeError, ValueError):
+                    show_text("Please enter a valid price.")
+                    return
+                if new_price <= 0:
+                    show_text("Sale price must be greater than zero.")
+                    return
+                selected_product.sale_price = new_price
+                show_text(f"{selected_product.name} sale price set to ${selected_product.sale_price:,.2f}.")
+            else:
+                show_text("Invalid action.")
+            return
+
+        if action_choice == 1:
+            product_number_raw = simpledialog.askstring("Production Target", "Enter product number to update production:")
+            if product_number_raw is None:
+                return
+            try:
+                product_index = int(product_number_raw) - 1
+            except (TypeError, ValueError):
+                show_text("Please enter a valid product number.")
+                return
+            if product_index < 0 or product_index >= len(company.products):
+                show_text("Invalid product number.")
+                return
+            target_raw = simpledialog.askstring("Production Target", f"How many units of {company.products[product_index].name} should be produced this month?")
+            if target_raw is None:
+                return
+            try:
+                target = int(target_raw)
+            except (TypeError, ValueError):
+                show_text("Please enter a valid production target.")
+                return
+            if target < 0:
+                show_text("Production target cannot be negative.")
+                return
+            product = company.products[product_index]
+            required_capital = target * product.manufacturing_cost
+            if not can_afford_production(company, product, target):
+                show_text(
+                    f"Not enough capital to produce {target} units of {product.name}. "
+                    f"This would cost ${required_capital:,.2f}, but your company has ${company.cash:,.2f}."
+                )
+                return
+            product.set_month_plan(target)
+            show_text(f"{product.name} production target set to {product.production_target} units.")
+        elif action_choice == 2:
+            product_number_raw = simpledialog.askstring("Sale Price", "Enter product number to update sale price:")
+            if product_number_raw is None:
+                return
+            try:
+                product_index = int(product_number_raw) - 1
+            except (TypeError, ValueError):
+                show_text("Please enter a valid product number.")
+                return
+            if product_index < 0 or product_index >= len(company.products):
+                show_text("Invalid product number.")
+                return
+            price_raw = simpledialog.askstring("Sale Price", f"Set the sale price for {company.products[product_index].name}: ")
+            if price_raw is None:
+                return
+            try:
+                new_price = float(price_raw)
+            except (TypeError, ValueError):
+                show_text("Please enter a valid price.")
+                return
+            if new_price <= 0:
+                show_text("Sale price must be greater than zero.")
+                return
+            company.products[product_index].sale_price = new_price
+            show_text(f"{company.products[product_index].name} sale price set to ${company.products[product_index].sale_price:,.2f}.")
+        else:
+            show_text("Invalid option.")
+
+    def invest_in_company():
+        if player.company is None:
+            show_text("Create a company first.")
+            return
+
+        amount_raw = simpledialog.askstring("Investment", "How much would you like to invest into your company?")
+        if amount_raw is None:
+            return
+
+        try:
+            investment = float(amount_raw)
+        except (TypeError, ValueError):
+            show_text("Please enter a valid investment amount.")
+            return
+
+        if investment <= 0:
+            show_text("Investment amount must be greater than zero.")
+            return
+        if player.bank < investment:
+            show_text(f"You do not have enough in your bank account. You have ${player.bank:,.2f}.")
+            return
+
+        player.bank -= investment
+        player.company.invest(investment)
+        show_text(f"You invested ${investment:,.2f} into {player.company.name}.\nCompany cash: ${player.company.cash:,.2f}")
+
+    def run_company_month():
+        if player.company is None:
+            show_text("Create a company first.")
+            return
+
+        company = player.company
+        if not company.products:
+            show_text("You have no products to sell this month.")
+            return
+
+        required_capital = sum(product.production_target * product.manufacturing_cost for product in company.products)
+        if company.cash < required_capital:
+            show_text(
+                f"Not enough capital to run this month's production. "
+                f"You need ${required_capital:,.2f} but only have ${company.cash:,.2f}. "
+                f"Lower the production targets or invest more cash."
+            )
+            return
+
+        company.run_month()
+        player.advance_month()
+        refresh_header()
+        refresh_company_summary_panel()
+        summary = company.get_financial_summary()
+        show_text(
+            f"Month complete.\n"
+            f"Revenue: ${summary['revenue']:,.2f}\n"
+            f"Expenses: ${summary['expenses']:,.2f}\n"
+            f"Net income: ${summary['net_income']:,.2f}\n"
+            f"Cash: ${summary['cash']:,.2f}\n"
+            f"Date: {player.month}/{player.day}/{player.year}"
+        )
+
     # All stock controls live in this center panel, not the left navigation.
+    company_panel = tk.Frame(page, bg="#111111")
+    company_title = tk.Label(company_panel, text="Company Management", fg="white", bg="#111111", font=("Segoe UI", 16, "bold"))
+    company_title.pack(pady=(0, 8))
+
+    company_action_bar = tk.Frame(company_panel, bg="#111111")
+    company_action_bar.pack(fill="x", pady=(0, 10))
+    company_summary_box = tk.Text(company_panel, bg="#000000", fg="#dddddd", font=("Segoe UI", 11), state="disabled", wrap="word", height=18)
+    company_summary_box.pack(fill="both", expand=True)
+
+    def refresh_company_summary_panel():
+        company_summary_box.configure(state="normal")
+        company_summary_box.delete("1.0", tk.END)
+        if player.company is None:
+            company_summary_box.insert("end", "No company created yet.\nUse Create Company to begin.")
+        else:
+            company = player.company
+            summary = company.get_financial_summary()
+            lines = [
+                f"Company: {company.name}",
+                f"Sector: {company.sector}",
+                f"Cash: ${summary['cash']:,.2f}",
+                f"Revenue: ${summary['revenue']:,.2f}",
+                f"Expenses: ${summary['expenses']:,.2f}",
+                f"Net income: ${summary['net_income']:,.2f}",
+                f"Debt: ${summary['debt']:,.2f}",
+                f"Capital invested: ${summary['capital_invested']:,.2f}",
+                f"Units sold: {summary['total_units_sold']}",
+                f"Unsold units: {summary['total_units_unsold']}",
+                f"Inventory: {summary['total_inventory']}",
+                "",
+                "Products:",
+            ]
+            if company.products:
+                for product in company.products:
+                    lines.append(
+                        f"- {product.name} | Price: ${product.sale_price:,.2f} | "
+                        f"Production: {product.production_target} | Sold: {product.units_sold} | "
+                        f"Inventory: {product.inventory} | Revenue: ${product.monthly_revenue:,.2f} | "
+                        f"Profit: ${product.monthly_profit:,.2f}"
+                    )
+            else:
+                lines.append("- No products launched yet.")
+            company_summary_box.insert("end", "\n".join(lines))
+        company_summary_box.configure(state="disabled")
+
+    make_button(company_action_bar, "Create", create_company_gui).pack(side="left", fill="x", expand=True, padx=(0, 6))
+    make_button(company_action_bar, "Summary", show_company_summary).pack(side="left", fill="x", expand=True, padx=(0, 6))
+    make_button(company_action_bar, "Research", research_and_launch_product).pack(side="left", fill="x", expand=True, padx=(0, 6))
+    make_button(company_action_bar, "Products", manage_company_products).pack(side="left", fill="x", expand=True, padx=(0, 6))
+    make_button(company_action_bar, "Invest", invest_in_company).pack(side="left", fill="x", expand=True, padx=(0, 6))
+    make_button(company_action_bar, "Run Month", run_company_month).pack(side="left", fill="x", expand=True)
+
     stock_panel = tk.Frame(page, bg="#111111")
     stock_title = tk.Label(stock_panel, text="Stock Market", fg="white", bg="#111111", font=("Segoe UI", 16, "bold"))
     stock_title.pack(pady=(0, 8))
@@ -118,6 +541,8 @@ def launch():
     current_view = "stocks"
 
     def select_stock(_event=None):
+        if _event is not None:
+            pass
         selection = stock_list.curselection()
         if not selection:
             return
@@ -191,13 +616,23 @@ def launch():
         nonlocal current_page
         current_page = "stocks"
         textbox.pack_forget()
+        company_panel.pack_forget()
         stock_panel.pack(fill="both", expand=True)
         populate_stocks(active_sector.get())
+
+    def show_company_menu():
+        nonlocal current_page
+        current_page = "company_menu"
+        textbox.pack_forget()
+        stock_panel.pack_forget()
+        company_panel.pack(fill="both", expand=True)
+        refresh_company_summary_panel()
 
     make_button(sidebar, "Finances", show_finances).pack(fill="x")
     make_button(sidebar, "Next Day", lambda: advance_days(1)).pack(fill="x")
     make_button(sidebar, "Next Year", lambda: advance_days(365)).pack(fill="x")
     make_button(sidebar, "View Stocks", show_stock_menu).pack(fill="x")
+    make_button(sidebar, "Company Management", show_company_menu).pack(fill="x")
 
     refresh_header()
     show_text("Welcome to Banking Life Simulator.")

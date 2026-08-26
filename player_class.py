@@ -1,14 +1,19 @@
+from __future__ import annotations
+
+from company_class import Company
+
+
 class Player:
     def __init__(self):
-        self.cash = 100
-        self.bank = 10000000000000000000000000000000
+        self.cash: float = 100.0
+        self.bank: float = float(1000)
         self.heat = 0
         self.year = 2000
         self.month = 1
         self.day = 1
 
         self.portfolio = {}
-        self.company = None
+        self.company: Company | None = None
 
     def change_money(self, cash=0, bank=0):
         self.cash += cash
@@ -42,3 +47,10 @@ class Player:
             if self.month > 12:
                 self.month = 1
                 self.year += 1
+
+    def advance_month(self):
+        self.day = 1
+        self.month += 1
+        if self.month > 12:
+            self.month = 1
+            self.year += 1

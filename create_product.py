@@ -49,27 +49,28 @@ class Product:
 
     @classmethod
     def from_json(cls, data):
-        unit_cost = data.get("manufacturing_cost", data.get("unit_cost", 0))
+        manufacturing_cost = data.get("manufacturing_cost", data.get("unit_cost", 0))
+        unit_cost = data.get("unit_cost", manufacturing_cost)
         sale_price = data.get("sale_price")
         if sale_price is None:
-            sale_price = max(unit_cost * 1.75, 1.0)
+            sale_price = max(float(manufacturing_cost) * 1.75, 1.0)
 
         research_cost = data.get("research_cost", 0)
         if research_cost:
-            research_cost = int(round(research_cost * RESEARCH_COST_MULTIPLIER))
+            research_cost = int(round(float(research_cost) * RESEARCH_COST_MULTIPLIER))
             if research_cost < 2500:
                 research_cost = 2500
 
-        demand = data.get("demand", 5)
+        demand = data.get("demand", data.get("base_demand", 5))
         competition = data.get("competition", 5)
 
         return cls(
             name=data.get("name"),
-            sale_price=sale_price,
-            unit_cost=unit_cost,
+            sale_price=float(sale_price),
+            unit_cost=float(unit_cost),
             base_demand=demand,
             sector=data.get("sector", "Unknown"),
-            manufacturing_cost=unit_cost,
+            manufacturing_cost=float(manufacturing_cost),
             research_cost=research_cost,
             researched=False,
             competition=competition,

@@ -1,13 +1,14 @@
 class Player:
     def __init__(self):
         self.cash = 100
-        self.bank = 100
+        self.bank = 10000000000000000000000000000000
         self.heat = 0
         self.year = 2000
         self.month = 1
         self.day = 1
 
         self.portfolio = {}
+        self.company = None
 
     def change_money(self, cash=0, bank=0):
         self.cash += cash

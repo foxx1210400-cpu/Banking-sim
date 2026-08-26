@@ -1,9 +1,5 @@
-class Product:
-    def __init__(self, name, sale_price, unit_cost, base_demand=100):
-        self.name = name
-        self.sale_price = sale_price
-        self.unit_cost = unit_cost
-        self.base_demand = base_demand
+from create_product import ProductCreator
+from company_logic import simulate_company_month
 
 
 class Company:
@@ -13,8 +9,15 @@ class Company:
         self.cash = 0
         self.revenue = 0
         self.expenses = 0
+        self.net_income = 0
         self.debt = 0
         self.capital_invested = 0
+        self.total_revenue = 0
+        self.total_expenses = 0
+        self.total_net_income = 0
+        self.total_units_sold = 0
+        self.total_units_unsold = 0
+        self.total_inventory = 0
         self.products = []
 
     def invest(self, amount):
@@ -25,35 +28,49 @@ class Company:
         self.capital_invested += amount
         return f"Invested ${amount:,.2f} into {self.name}."
 
-    def create_product(self, name, sale_price, unit_cost):
-        if not name.strip():
-            return "Product needs a name."
+    def create_product(self, name, sale_price, unit_cost, base_demand=100, sector=None, manufacturing_cost=None, research_cost=0):
+        try:
+            product = ProductCreator.create(
+                name=name,
+                sale_price=sale_price,
+                unit_cost=unit_cost,
+                base_demand=base_demand,
+                sector=sector or self.sector,
+                manufacturing_cost=manufacturing_cost,
+                research_cost=research_cost,
+            )
+        except ValueError as exc:
+            return str(exc)
 
-        if sale_price <= 0 or unit_cost < 0:
-            return "Price and cost must be valid."
-
-        product = Product(name, sale_price, unit_cost)
         self.products.append(product)
-        return f"{name} was created."
+        return f"{product.name} was created."
+
+    def add_product(self, product):
+        if product is None:
+            return "No product was provided."
+        self.products.append(product)
+        return f"{product.name} was added."
 
     def run_month(self):
-        total_revenue = 0
-        total_costs = 0
+        summary = simulate_company_month(self)
+        self.net_income = summary["net_income"]
+        return summary["net_income"]
 
-        for product in self.products:
-            # Temporary demand rule: higher prices mean fewer sales.
-            price_factor = max(0.25, min(1.75, 10 / product.sale_price))
-            units_sold = int(product.base_demand * price_factor)
-
-            total_revenue += units_sold * product.sale_price
-            total_costs += units_sold * product.unit_cost
-
-        profit = total_revenue - total_costs
-        self.cash += profit
-        self.revenue += total_revenue
-        self.expenses += total_costs
-
-        return profit
+    def get_financial_summary(self):
+        return {
+            "cash": self.cash,
+            "revenue": self.revenue,
+            "expenses": self.expenses,
+            "net_income": self.net_income,
+            "debt": self.debt,
+            "capital_invested": self.capital_invested,
+            "lifetime_revenue": self.total_revenue,
+            "lifetime_expenses": self.total_expenses,
+            "lifetime_net_income": self.total_net_income,
+            "total_units_sold": self.total_units_sold,
+            "total_units_unsold": self.total_units_unsold,
+            "total_inventory": self.total_inventory,
+        }
 
     def value(self):
         return max(self.cash - self.debt, 0)

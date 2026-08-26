@@ -1,0 +1,1462 @@
+{
+  "products": {
+    "Technology": [
+      {
+        "name": "Neural Voice Assistant",
+        "sector": "Technology",
+        "demand": 7,
+        "manufacturing_cost": 185,
+        "research_cost": 420000,
+        "competition": 8
+      },
+      {
+        "name": "Quantum Chipset",
+        "sector": "Technology",
+        "demand": 4,
+        "manufacturing_cost": 260,
+        "research_cost": 610000,
+        "competition": 8
+      },
+      {
+        "name": "Smart Home Hub",
+        "sector": "Technology",
+        "demand": 5,
+        "manufacturing_cost": 150,
+        "research_cost": 330000,
+        "competition": 8
+      },
+      {
+        "name": "Drone Navigation Kit",
+        "sector": "Technology",
+        "demand": 3,
+        "manufacturing_cost": 220,
+        "research_cost": 510000,
+        "competition": 8
+      },
+      {
+        "name": "AI Security Camera",
+        "sector": "Technology",
+        "demand": 8,
+        "manufacturing_cost": 210,
+        "research_cost": 460000,
+        "competition": 8
+      },
+      {
+        "name": "Wearable Health Sensor",
+        "sector": "Technology",
+        "demand": 6,
+        "manufacturing_cost": 170,
+        "research_cost": 390000,
+        "competition": 8
+      },
+      {
+        "name": "Cloud Sync Module",
+        "sector": "Technology",
+        "demand": 4,
+        "manufacturing_cost": 145,
+        "research_cost": 310000,
+        "competition": 8
+      },
+      {
+        "name": "Robotic Arm Controller",
+        "sector": "Technology",
+        "demand": 5,
+        "manufacturing_cost": 240,
+        "research_cost": 560000,
+        "competition": 8
+      },
+      {
+        "name": "Brainwave Headset",
+        "sector": "Technology",
+        "demand": 2,
+        "manufacturing_cost": 280,
+        "research_cost": 700000,
+        "competition": 8
+      },
+      {
+        "name": "Edge AI Processor",
+        "sector": "Technology",
+        "demand": 7,
+        "manufacturing_cost": 300,
+        "research_cost": 780000,
+        "competition": 8
+      },
+      {
+        "name": "Autonomous Delivery Bot",
+        "sector": "Technology",
+        "demand": 1,
+        "manufacturing_cost": 450,
+        "research_cost": 920000,
+        "competition": 8
+      },
+      {
+        "name": "Cybersecurity Firewall",
+        "sector": "Technology",
+        "demand": 9,
+        "manufacturing_cost": 330,
+        "research_cost": 680000,
+        "competition": 8
+      },
+      {
+        "name": "AR Workbench",
+        "sector": "Technology",
+        "demand": 3,
+        "manufacturing_cost": 250,
+        "research_cost": 520000,
+        "competition": 8
+      },
+      {
+        "name": "Battery Optimization Chip",
+        "sector": "Technology",
+        "demand": 6,
+        "manufacturing_cost": 160,
+        "research_cost": 370000,
+        "competition": 8
+      },
+      {
+        "name": "Precision Farming Sensor",
+        "sector": "Technology",
+        "demand": 2,
+        "manufacturing_cost": 180,
+        "research_cost": 400000,
+        "competition": 8
+      },
+      {
+        "name": "Machine Vision Lens",
+        "sector": "Technology",
+        "demand": 4,
+        "manufacturing_cost": 205,
+        "research_cost": 430000,
+        "competition": 8
+      },
+      {
+        "name": "Micromotor Controller",
+        "sector": "Technology",
+        "demand": 3,
+        "manufacturing_cost": 190,
+        "research_cost": 390000,
+        "competition": 8
+      },
+      {
+        "name": "Neural Data Cube",
+        "sector": "Technology",
+        "demand": 5,
+        "manufacturing_cost": 275,
+        "research_cost": 590000,
+        "competition": 8
+      },
+      {
+        "name": "Smart Grid Relay",
+        "sector": "Technology",
+        "demand": 5,
+        "manufacturing_cost": 230,
+        "research_cost": 500000,
+        "competition": 8
+      },
+      {
+        "name": "Adaptive Robotics Kit",
+        "sector": "Technology",
+        "demand": 6,
+        "manufacturing_cost": 290,
+        "research_cost": 640000,
+        "competition": 8
+      }
+    ],
+    "Finance": [
+      {
+        "name": "AI Budget Forecasting Tool",
+        "sector": "Finance",
+        "demand": 3,
+        "manufacturing_cost": 245,
+        "research_cost": 480000,
+        "competition": 7
+      },
+      {
+        "name": "Digital Lending Platform",
+        "sector": "Finance",
+        "demand": 4,
+        "manufacturing_cost": 270,
+        "research_cost": 520000,
+        "competition": 7
+      },
+      {
+        "name": "Crypto Risk Scanner",
+        "sector": "Finance",
+        "demand": 3,
+        "manufacturing_cost": 230,
+        "research_cost": 490000,
+        "competition": 7
+      },
+      {
+        "name": "Portfolio Analytics Suite",
+        "sector": "Finance",
+        "demand": 5,
+        "manufacturing_cost": 255,
+        "research_cost": 540000,
+        "competition": 7
+      },
+      {
+        "name": "Mobile Banking App",
+        "sector": "Finance",
+        "demand": 9,
+        "manufacturing_cost": 140,
+        "research_cost": 300000,
+        "competition": 7
+      },
+      {
+        "name": "Mortgage Automation Engine",
+        "sector": "Finance",
+        "demand": 2,
+        "manufacturing_cost": 280,
+        "research_cost": 620000,
+        "competition": 7
+      },
+      {
+        "name": "Insurance Claims Dashboard",
+        "sector": "Finance",
+        "demand": 3,
+        "manufacturing_cost": 199,
+        "research_cost": 430000,
+        "competition": 7
+      },
+      {
+        "name": "Fraud Detection API",
+        "sector": "Finance",
+        "demand": 7,
+        "manufacturing_cost": 210,
+        "research_cost": 470000,
+        "competition": 7
+      },
+      {
+        "name": "Treasury Management Bot",
+        "sector": "Finance",
+        "demand": 2,
+        "manufacturing_cost": 260,
+        "research_cost": 560000,
+        "competition": 7
+      },
+      {
+        "name": "Investment Strategy Planner",
+        "sector": "Finance",
+        "demand": 4,
+        "manufacturing_cost": 235,
+        "research_cost": 500000,
+        "competition": 7
+      },
+      {
+        "name": "Credit Scoring Engine",
+        "sector": "Finance",
+        "demand": 5,
+        "manufacturing_cost": 250,
+        "research_cost": 510000,
+        "competition": 7
+      },
+      {
+        "name": "Billing Reconciliation Tool",
+        "sector": "Finance",
+        "demand": 3,
+        "manufacturing_cost": 175,
+        "research_cost": 360000,
+        "competition": 7
+      },
+      {
+        "name": "Wealth Advisor Platform",
+        "sector": "Finance",
+        "demand": 5,
+        "manufacturing_cost": 300,
+        "research_cost": 650000,
+        "competition": 7
+      },
+      {
+        "name": "Expense Tracking Service",
+        "sector": "Finance",
+        "demand": 6,
+        "manufacturing_cost": 120,
+        "research_cost": 280000,
+        "competition": 7
+      },
+      {
+        "name": "Audit Simulation Suite",
+        "sector": "Finance",
+        "demand": 1,
+        "manufacturing_cost": 290,
+        "research_cost": 610000,
+        "competition": 7
+      },
+      {
+        "name": "Risk Compliance Monitor",
+        "sector": "Finance",
+        "demand": 3,
+        "manufacturing_cost": 220,
+        "research_cost": 450000,
+        "competition": 7
+      },
+      {
+        "name": "Market Signal Feed",
+        "sector": "Finance",
+        "demand": 5,
+        "manufacturing_cost": 170,
+        "research_cost": 360000,
+        "competition": 7
+      },
+      {
+        "name": "Payment Gateway Optimizer",
+        "sector": "Finance",
+        "demand": 7,
+        "manufacturing_cost": 215,
+        "research_cost": 440000,
+        "competition": 7
+      },
+      {
+        "name": "Liquidity Forecast Tool",
+        "sector": "Finance",
+        "demand": 2,
+        "manufacturing_cost": 235,
+        "research_cost": 510000,
+        "competition": 7
+      },
+      {
+        "name": "Tax Automation Suite",
+        "sector": "Finance",
+        "demand": 4,
+        "manufacturing_cost": 200,
+        "research_cost": 425000,
+        "competition": 7
+      }
+    ],
+    "Healthcare": [
+      {
+        "name": "Wearable ECG Monitor",
+        "sector": "Healthcare",
+        "demand": 7,
+        "manufacturing_cost": 210,
+        "research_cost": 500000,
+        "competition": 6
+      },
+      {
+        "name": "Remote Patient Portal",
+        "sector": "Healthcare",
+        "demand": 8,
+        "manufacturing_cost": 150,
+        "research_cost": 340000,
+        "competition": 6
+      },
+      {
+        "name": "AI Diagnostic Assistant",
+        "sector": "Healthcare",
+        "demand": 6,
+        "manufacturing_cost": 280,
+        "research_cost": 670000,
+        "competition": 6
+      },
+      {
+        "name": "Surgical Imaging Lens",
+        "sector": "Healthcare",
+        "demand": 3,
+        "manufacturing_cost": 260,
+        "research_cost": 550000,
+        "competition": 6
+      },
+      {
+        "name": "Smart Medication Dispenser",
+        "sector": "Healthcare",
+        "demand": 7,
+        "manufacturing_cost": 220,
+        "research_cost": 480000,
+        "competition": 6
+      },
+      {
+        "name": "Home Rehab Device",
+        "sector": "Healthcare",
+        "demand": 4,
+        "manufacturing_cost": 180,
+        "research_cost": 370000,
+        "competition": 6
+      },
+      {
+        "name": "Blood Analysis Scanner",
+        "sector": "Healthcare",
+        "demand": 3,
+        "manufacturing_cost": 240,
+        "research_cost": 600000,
+        "competition": 6
+      },
+      {
+        "name": "Prosthetic Sensor Kit",
+        "sector": "Healthcare",
+        "demand": 2,
+        "manufacturing_cost": 260,
+        "research_cost": 580000,
+        "competition": 6
+      },
+      {
+        "name": "Telehealth Tablet",
+        "sector": "Healthcare",
+        "demand": 9,
+        "manufacturing_cost": 160,
+        "research_cost": 330000,
+        "competition": 6
+      },
+      {
+        "name": "Medical Records AI",
+        "sector": "Healthcare",
+        "demand": 7,
+        "manufacturing_cost": 190,
+        "research_cost": 410000,
+        "competition": 6
+      },
+      {
+        "name": "Smart Ventilator System",
+        "sector": "Healthcare",
+        "demand": 4,
+        "manufacturing_cost": 420,
+        "research_cost": 860000,
+        "competition": 6
+      },
+      {
+        "name": "Nano Drug Delivery Patch",
+        "sector": "Healthcare",
+        "demand": 2,
+        "manufacturing_cost": 310,
+        "research_cost": 710000,
+        "competition": 6
+      },
+      {
+        "name": "Remote Monitoring Band",
+        "sector": "Healthcare",
+        "demand": 7,
+        "manufacturing_cost": 205,
+        "research_cost": 420000,
+        "competition": 6
+      },
+      {
+        "name": "Dental Imaging System",
+        "sector": "Healthcare",
+        "demand": 1,
+        "manufacturing_cost": 250,
+        "research_cost": 540000,
+        "competition": 6
+      },
+      {
+        "name": "Oncology Lab Platform",
+        "sector": "Healthcare",
+        "demand": 3,
+        "manufacturing_cost": 330,
+        "research_cost": 760000,
+        "competition": 6
+      },
+      {
+        "name": "Pediatric Care Tablet",
+        "sector": "Healthcare",
+        "demand": 6,
+        "manufacturing_cost": 170,
+        "research_cost": 350000,
+        "competition": 6
+      },
+      {
+        "name": "Portable Ultrasound Unit",
+        "sector": "Healthcare",
+        "demand": 3,
+        "manufacturing_cost": 390,
+        "research_cost": 810000,
+        "competition": 6
+      },
+      {
+        "name": "Biometric Fitness Band",
+        "sector": "Healthcare",
+        "demand": 9,
+        "manufacturing_cost": 135,
+        "research_cost": 290000,
+        "competition": 6
+      },
+      {
+        "name": "Clinical Trial Platform",
+        "sector": "Healthcare",
+        "demand": 4,
+        "manufacturing_cost": 220,
+        "research_cost": 470000,
+        "competition": 6
+      },
+      {
+        "name": "Recovery Therapy Pod",
+        "sector": "Healthcare",
+        "demand": 1,
+        "manufacturing_cost": 460,
+        "research_cost": 930000,
+        "competition": 6
+      }
+    ],
+    "Energy": [
+      {
+        "name": "Solar Roof Tile",
+        "sector": "Energy",
+        "demand": 7,
+        "manufacturing_cost": 180,
+        "research_cost": 410000,
+        "competition": 7
+      },
+      {
+        "name": "Battery Storage Pack",
+        "sector": "Energy",
+        "demand": 8,
+        "manufacturing_cost": 220,
+        "research_cost": 500000,
+        "competition": 7
+      },
+      {
+        "name": "Hydrogen Fuel Cell",
+        "sector": "Energy",
+        "demand": 4,
+        "manufacturing_cost": 260,
+        "research_cost": 610000,
+        "competition": 7
+      },
+      {
+        "name": "Smart Wind Turbine",
+        "sector": "Energy",
+        "demand": 4,
+        "manufacturing_cost": 310,
+        "research_cost": 760000,
+        "competition": 7
+      },
+      {
+        "name": "Geothermal Pump",
+        "sector": "Energy",
+        "demand": 2,
+        "manufacturing_cost": 250,
+        "research_cost": 580000,
+        "competition": 7
+      },
+      {
+        "name": "EV Charging Station",
+        "sector": "Energy",
+        "demand": 9,
+        "manufacturing_cost": 240,
+        "research_cost": 530000,
+        "competition": 7
+      },
+      {
+        "name": "Microgrid Controller",
+        "sector": "Energy",
+        "demand": 4,
+        "manufacturing_cost": 230,
+        "research_cost": 460000,
+        "competition": 7
+      },
+      {
+        "name": "Heat Recovery Unit",
+        "sector": "Energy",
+        "demand": 3,
+        "manufacturing_cost": 200,
+        "research_cost": 410000,
+        "competition": 7
+      },
+      {
+        "name": "Carbon Capture Filter",
+        "sector": "Energy",
+        "demand": 5,
+        "manufacturing_cost": 290,
+        "research_cost": 670000,
+        "competition": 7
+      },
+      {
+        "name": "Grid Optimization Sensor",
+        "sector": "Energy",
+        "demand": 6,
+        "manufacturing_cost": 170,
+        "research_cost": 360000,
+        "competition": 7
+      },
+      {
+        "name": "Offshore Wind Blade",
+        "sector": "Energy",
+        "demand": 2,
+        "manufacturing_cost": 350,
+        "research_cost": 780000,
+        "competition": 7
+      },
+      {
+        "name": "Energy Storage Gateway",
+        "sector": "Energy",
+        "demand": 5,
+        "manufacturing_cost": 210,
+        "research_cost": 430000,
+        "competition": 7
+      },
+      {
+        "name": "Fuel Cell Generator",
+        "sector": "Energy",
+        "demand": 4,
+        "manufacturing_cost": 420,
+        "research_cost": 900000,
+        "competition": 7
+      },
+      {
+        "name": "Smart Solar Inverter",
+        "sector": "Energy",
+        "demand": 7,
+        "manufacturing_cost": 190,
+        "research_cost": 390000,
+        "competition": 7
+      },
+      {
+        "name": "Thermal Battery Unit",
+        "sector": "Energy",
+        "demand": 3,
+        "manufacturing_cost": 250,
+        "research_cost": 560000,
+        "competition": 7
+      },
+      {
+        "name": "Solar Tracking Mount",
+        "sector": "Energy",
+        "demand": 5,
+        "manufacturing_cost": 170,
+        "research_cost": 340000,
+        "competition": 7
+      },
+      {
+        "name": "Demand Response Platform",
+        "sector": "Energy",
+        "demand": 5,
+        "manufacturing_cost": 200,
+        "research_cost": 420000,
+        "competition": 7
+      },
+      {
+        "name": "Wave Energy Converter",
+        "sector": "Energy",
+        "demand": 1,
+        "manufacturing_cost": 410,
+        "research_cost": 820000,
+        "competition": 7
+      },
+      {
+        "name": "Energy Efficiency Sensor",
+        "sector": "Energy",
+        "demand": 6,
+        "manufacturing_cost": 160,
+        "research_cost": 330000,
+        "competition": 7
+      },
+      {
+        "name": "Distributed Grid Router",
+        "sector": "Energy",
+        "demand": 3,
+        "manufacturing_cost": 240,
+        "research_cost": 520000,
+        "competition": 7
+      }
+    ],
+    "Retail": [
+      {
+        "name": "Smart Checkout Kiosk",
+        "sector": "Retail",
+        "demand": 5,
+        "manufacturing_cost": 195,
+        "research_cost": 430000,
+        "competition": 9
+      },
+      {
+        "name": "Inventory Vision System",
+        "sector": "Retail",
+        "demand": 7,
+        "manufacturing_cost": 220,
+        "research_cost": 500000,
+        "competition": 9
+      },
+      {
+        "name": "Self-Serve Cart",
+        "sector": "Retail",
+        "demand": 4,
+        "manufacturing_cost": 180,
+        "research_cost": 390000,
+        "competition": 9
+      },
+      {
+        "name": "Loyalty Reward Terminal",
+        "sector": "Retail",
+        "demand": 3,
+        "manufacturing_cost": 150,
+        "research_cost": 320000,
+        "competition": 9
+      },
+      {
+        "name": "Virtual Fitting Mirror",
+        "sector": "Retail",
+        "demand": 4,
+        "manufacturing_cost": 270,
+        "research_cost": 590000,
+        "competition": 9
+      },
+      {
+        "name": "Smart Shelf Sensor",
+        "sector": "Retail",
+        "demand": 6,
+        "manufacturing_cost": 175,
+        "research_cost": 360000,
+        "competition": 9
+      },
+      {
+        "name": "Autonomous Store Robot",
+        "sector": "Retail",
+        "demand": 1,
+        "manufacturing_cost": 410,
+        "research_cost": 900000,
+        "competition": 9
+      },
+      {
+        "name": "Digital Coupon Hub",
+        "sector": "Retail",
+        "demand": 8,
+        "manufacturing_cost": 120,
+        "research_cost": 260000,
+        "competition": 9
+      },
+      {
+        "name": "Pickup Locker System",
+        "sector": "Retail",
+        "demand": 4,
+        "manufacturing_cost": 210,
+        "research_cost": 470000,
+        "competition": 9
+      },
+      {
+        "name": "Customer Flow Analyzer",
+        "sector": "Retail",
+        "demand": 3,
+        "manufacturing_cost": 160,
+        "research_cost": 340000,
+        "competition": 9
+      },
+      {
+        "name": "Delivery Route Planner",
+        "sector": "Retail",
+        "demand": 6,
+        "manufacturing_cost": 185,
+        "research_cost": 380000,
+        "competition": 9
+      },
+      {
+        "name": "E-Commerce CRM Kit",
+        "sector": "Retail",
+        "demand": 8,
+        "manufacturing_cost": 130,
+        "research_cost": 290000,
+        "competition": 9
+      },
+      {
+        "name": "Product Recommendation Engine",
+        "sector": "Retail",
+        "demand": 9,
+        "manufacturing_cost": 145,
+        "research_cost": 310000,
+        "competition": 9
+      },
+      {
+        "name": "Auto-Stock Restocker",
+        "sector": "Retail",
+        "demand": 2,
+        "manufacturing_cost": 330,
+        "research_cost": 720000,
+        "competition": 9
+      },
+      {
+        "name": "Custom Packaging Printer",
+        "sector": "Retail",
+        "demand": 3,
+        "manufacturing_cost": 190,
+        "research_cost": 420000,
+        "competition": 9
+      },
+      {
+        "name": "Retail Fraud Scanner",
+        "sector": "Retail",
+        "demand": 4,
+        "manufacturing_cost": 200,
+        "research_cost": 450000,
+        "competition": 9
+      },
+      {
+        "name": "Storefront Sign Panel",
+        "sector": "Retail",
+        "demand": 5,
+        "manufacturing_cost": 160,
+        "research_cost": 320000,
+        "competition": 9
+      },
+      {
+        "name": "Dynamic Pricing AI",
+        "sector": "Retail",
+        "demand": 8,
+        "manufacturing_cost": 210,
+        "research_cost": 470000,
+        "competition": 9
+      },
+      {
+        "name": "Demand Forecast Module",
+        "sector": "Retail",
+        "demand": 7,
+        "manufacturing_cost": 175,
+        "research_cost": 370000,
+        "competition": 9
+      },
+      {
+        "name": "Quick Checkout Tablet",
+        "sector": "Retail",
+        "demand": 5,
+        "manufacturing_cost": 145,
+        "research_cost": 300000,
+        "competition": 9
+      }
+    ],
+    "Automotive": [
+      {
+        "name": "Autonomous Steering Module",
+        "sector": "Automotive",
+        "demand": 5,
+        "manufacturing_cost": 320,
+        "research_cost": 730000,
+        "competition": 7
+      },
+      {
+        "name": "EV Battery Pack",
+        "sector": "Automotive",
+        "demand": 9,
+        "manufacturing_cost": 390,
+        "research_cost": 860000,
+        "competition": 7
+      },
+      {
+        "name": "Smart Brake System",
+        "sector": "Automotive",
+        "demand": 4,
+        "manufacturing_cost": 260,
+        "research_cost": 560000,
+        "competition": 7
+      },
+      {
+        "name": "Driver Assist Camera",
+        "sector": "Automotive",
+        "demand": 6,
+        "manufacturing_cost": 240,
+        "research_cost": 520000,
+        "competition": 7
+      },
+      {
+        "name": "Adaptive Suspension Kit",
+        "sector": "Automotive",
+        "demand": 3,
+        "manufacturing_cost": 290,
+        "research_cost": 640000,
+        "competition": 7
+      },
+      {
+        "name": "Connected Dashboard Console",
+        "sector": "Automotive",
+        "demand": 7,
+        "manufacturing_cost": 210,
+        "research_cost": 470000,
+        "competition": 7
+      },
+      {
+        "name": "Electric Motor Assembly",
+        "sector": "Automotive",
+        "demand": 8,
+        "manufacturing_cost": 350,
+        "research_cost": 790000,
+        "competition": 7
+      },
+      {
+        "name": "Lane Warning Sensor",
+        "sector": "Automotive",
+        "demand": 3,
+        "manufacturing_cost": 170,
+        "research_cost": 380000,
+        "competition": 7
+      },
+      {
+        "name": "Tire Pressure Monitor",
+        "sector": "Automotive",
+        "demand": 5,
+        "manufacturing_cost": 140,
+        "research_cost": 300000,
+        "competition": 7
+      },
+      {
+        "name": "Vehicle AI Co-Pilot",
+        "sector": "Automotive",
+        "demand": 7,
+        "manufacturing_cost": 260,
+        "research_cost": 560000,
+        "competition": 7
+      },
+      {
+        "name": "Hybrid Drive Unit",
+        "sector": "Automotive",
+        "demand": 4,
+        "manufacturing_cost": 420,
+        "research_cost": 900000,
+        "competition": 7
+      },
+      {
+        "name": "Collision Avoidance Radar",
+        "sector": "Automotive",
+        "demand": 6,
+        "manufacturing_cost": 230,
+        "research_cost": 520000,
+        "competition": 7
+      },
+      {
+        "name": "Cabin Air Purifier",
+        "sector": "Automotive",
+        "demand": 2,
+        "manufacturing_cost": 160,
+        "research_cost": 330000,
+        "competition": 7
+      },
+      {
+        "name": "Electric Charging Port",
+        "sector": "Automotive",
+        "demand": 8,
+        "manufacturing_cost": 200,
+        "research_cost": 430000,
+        "competition": 7
+      },
+      {
+        "name": "Vehicle Health Scanner",
+        "sector": "Automotive",
+        "demand": 5,
+        "manufacturing_cost": 190,
+        "research_cost": 410000,
+        "competition": 7
+      },
+      {
+        "name": "Self-Repair Paint Kit",
+        "sector": "Automotive",
+        "demand": 1,
+        "manufacturing_cost": 230,
+        "research_cost": 500000,
+        "competition": 7
+      },
+      {
+        "name": "Navigation Beacon Module",
+        "sector": "Automotive",
+        "demand": 4,
+        "manufacturing_cost": 180,
+        "research_cost": 360000,
+        "competition": 7
+      },
+      {
+        "name": "Automotive Safety Sensor",
+        "sector": "Automotive",
+        "demand": 6,
+        "manufacturing_cost": 175,
+        "research_cost": 390000,
+        "competition": 7
+      },
+      {
+        "name": "Fuel Efficiency Optimizer",
+        "sector": "Automotive",
+        "demand": 5,
+        "manufacturing_cost": 205,
+        "research_cost": 470000,
+        "competition": 7
+      },
+      {
+        "name": "EV Battery Cooling System",
+        "sector": "Automotive",
+        "demand": 6,
+        "manufacturing_cost": 280,
+        "research_cost": 620000,
+        "competition": 7
+      }
+    ],
+    "Food": [
+      {
+        "name": "Plant Protein Snack",
+        "sector": "Food",
+        "demand": 8,
+        "manufacturing_cost": 110,
+        "research_cost": 270000,
+        "competition": 8
+      },
+      {
+        "name": "Smart Meal Kit",
+        "sector": "Food",
+        "demand": 6,
+        "manufacturing_cost": 130,
+        "research_cost": 290000,
+        "competition": 8
+      },
+      {
+        "name": "Cold Brew Blend",
+        "sector": "Food",
+        "demand": 7,
+        "manufacturing_cost": 95,
+        "research_cost": 240000,
+        "competition": 8
+      },
+      {
+        "name": "Organic Snack Pack",
+        "sector": "Food",
+        "demand": 6,
+        "manufacturing_cost": 120,
+        "research_cost": 280000,
+        "competition": 8
+      },
+      {
+        "name": "Protein Energy Bar",
+        "sector": "Food",
+        "demand": 8,
+        "manufacturing_cost": 115,
+        "research_cost": 250000,
+        "competition": 8
+      },
+      {
+        "name": "Fermentation Starter Set",
+        "sector": "Food",
+        "demand": 1,
+        "manufacturing_cost": 140,
+        "research_cost": 340000,
+        "competition": 8
+      },
+      {
+        "name": "Sustainable Meal Prep Box",
+        "sector": "Food",
+        "demand": 7,
+        "manufacturing_cost": 125,
+        "research_cost": 300000,
+        "competition": 8
+      },
+      {
+        "name": "Zero-Sugar Drink",
+        "sector": "Food",
+        "demand": 9,
+        "manufacturing_cost": 90,
+        "research_cost": 220000,
+        "competition": 8
+      },
+      {
+        "name": "Gourmet Frozen Bowl",
+        "sector": "Food",
+        "demand": 4,
+        "manufacturing_cost": 150,
+        "research_cost": 330000,
+        "competition": 8
+      },
+      {
+        "name": "Vegan Protein Shake",
+        "sector": "Food",
+        "demand": 8,
+        "manufacturing_cost": 105,
+        "research_cost": 260000,
+        "competition": 8
+      },
+      {
+        "name": "Precision Nutrition Drink",
+        "sector": "Food",
+        "demand": 5,
+        "manufacturing_cost": 125,
+        "research_cost": 290000,
+        "competition": 8
+      },
+      {
+        "name": "Farm Fresh Granola",
+        "sector": "Food",
+        "demand": 6,
+        "manufacturing_cost": 100,
+        "research_cost": 240000,
+        "competition": 8
+      },
+      {
+        "name": "Functional Coffee Blend",
+        "sector": "Food",
+        "demand": 7,
+        "manufacturing_cost": 108,
+        "research_cost": 250000,
+        "competition": 8
+      },
+      {
+        "name": "Instant Soup Kit",
+        "sector": "Food",
+        "demand": 4,
+        "manufacturing_cost": 110,
+        "research_cost": 260000,
+        "competition": 8
+      },
+      {
+        "name": "Cultured Yogurt Pack",
+        "sector": "Food",
+        "demand": 5,
+        "manufacturing_cost": 118,
+        "research_cost": 280000,
+        "competition": 8
+      },
+      {
+        "name": "Gluten-Free Bread Mix",
+        "sector": "Food",
+        "demand": 4,
+        "manufacturing_cost": 105,
+        "research_cost": 255000,
+        "competition": 8
+      },
+      {
+        "name": "Organic Salad Kit",
+        "sector": "Food",
+        "demand": 6,
+        "manufacturing_cost": 120,
+        "research_cost": 295000,
+        "competition": 8
+      },
+      {
+        "name": "Pet Nutrition Treat",
+        "sector": "Food",
+        "demand": 2,
+        "manufacturing_cost": 115,
+        "research_cost": 270000,
+        "competition": 8
+      },
+      {
+        "name": "Superfood Smoothie Mix",
+        "sector": "Food",
+        "demand": 8,
+        "manufacturing_cost": 118,
+        "research_cost": 280000,
+        "competition": 8
+      },
+      {
+        "name": "Meal Replacement Shake",
+        "sector": "Food",
+        "demand": 7,
+        "manufacturing_cost": 108,
+        "research_cost": 245000,
+        "competition": 8
+      }
+    ],
+    "Media": [
+      {
+        "name": "Streaming Video Bundle",
+        "sector": "Media",
+        "demand": 6,
+        "manufacturing_cost": 120,
+        "research_cost": 290000,
+        "competition": 9
+      },
+      {
+        "name": "Podcast Creator Suite",
+        "sector": "Media",
+        "demand": 4,
+        "manufacturing_cost": 150,
+        "research_cost": 330000,
+        "competition": 9
+      },
+      {
+        "name": "Short-Form Video Tool",
+        "sector": "Media",
+        "demand": 8,
+        "manufacturing_cost": 140,
+        "research_cost": 310000,
+        "competition": 9
+      },
+      {
+        "name": "Interactive News Platform",
+        "sector": "Media",
+        "demand": 3,
+        "manufacturing_cost": 170,
+        "research_cost": 360000,
+        "competition": 9
+      },
+      {
+        "name": "Live Event Streaming Kit",
+        "sector": "Media",
+        "demand": 2,
+        "manufacturing_cost": 220,
+        "research_cost": 490000,
+        "competition": 9
+      },
+      {
+        "name": "Creator Analytics Dashboard",
+        "sector": "Media",
+        "demand": 6,
+        "manufacturing_cost": 165,
+        "research_cost": 340000,
+        "competition": 9
+      },
+      {
+        "name": "Gaming Stream Overlay",
+        "sector": "Media",
+        "demand": 5,
+        "manufacturing_cost": 145,
+        "research_cost": 300000,
+        "competition": 9
+      },
+      {
+        "name": "AI News Summarizer",
+        "sector": "Media",
+        "demand": 4,
+        "manufacturing_cost": 130,
+        "research_cost": 280000,
+        "competition": 9
+      },
+      {
+        "name": "Community Chat App",
+        "sector": "Media",
+        "demand": 9,
+        "manufacturing_cost": 110,
+        "research_cost": 260000,
+        "competition": 9
+      },
+      {
+        "name": "Sports Highlights Engine",
+        "sector": "Media",
+        "demand": 3,
+        "manufacturing_cost": 175,
+        "research_cost": 370000,
+        "competition": 9
+      },
+      {
+        "name": "Video Editing Suite",
+        "sector": "Media",
+        "demand": 6,
+        "manufacturing_cost": 200,
+        "research_cost": 430000,
+        "competition": 9
+      },
+      {
+        "name": "Audience Insight Platform",
+        "sector": "Media",
+        "demand": 5,
+        "manufacturing_cost": 160,
+        "research_cost": 340000,
+        "competition": 9
+      },
+      {
+        "name": "Digital Magazine App",
+        "sector": "Media",
+        "demand": 2,
+        "manufacturing_cost": 130,
+        "research_cost": 290000,
+        "competition": 9
+      },
+      {
+        "name": "Influencer CRM Package",
+        "sector": "Media",
+        "demand": 3,
+        "manufacturing_cost": 155,
+        "research_cost": 330000,
+        "competition": 9
+      },
+      {
+        "name": "Podcast Monetization Kit",
+        "sector": "Media",
+        "demand": 5,
+        "manufacturing_cost": 125,
+        "research_cost": 270000,
+        "competition": 9
+      },
+      {
+        "name": "AR Storytelling Tool",
+        "sector": "Media",
+        "demand": 1,
+        "manufacturing_cost": 260,
+        "research_cost": 520000,
+        "competition": 9
+      },
+      {
+        "name": "Live Comment Moderator",
+        "sector": "Media",
+        "demand": 2,
+        "manufacturing_cost": 145,
+        "research_cost": 310000,
+        "competition": 9
+      },
+      {
+        "name": "Media Distribution Network",
+        "sector": "Media",
+        "demand": 7,
+        "manufacturing_cost": 210,
+        "research_cost": 470000,
+        "competition": 9
+      },
+      {
+        "name": "Social Clip Generator",
+        "sector": "Media",
+        "demand": 8,
+        "manufacturing_cost": 135,
+        "research_cost": 300000,
+        "competition": 9
+      },
+      {
+        "name": "Audience Growth Bot",
+        "sector": "Media",
+        "demand": 4,
+        "manufacturing_cost": 150,
+        "research_cost": 330000,
+        "competition": 9
+      }
+    ],
+    "Aerospace": [
+      {
+        "name": "Satellite Relay Unit",
+        "sector": "Aerospace",
+        "demand": 3,
+        "manufacturing_cost": 420,
+        "research_cost": 900000,
+        "competition": 5
+      },
+      {
+        "name": "Orbital Sensor Array",
+        "sector": "Aerospace",
+        "demand": 4,
+        "manufacturing_cost": 360,
+        "research_cost": 780000,
+        "competition": 5
+      },
+      {
+        "name": "Jet Fuel Optimization Kit",
+        "sector": "Aerospace",
+        "demand": 6,
+        "manufacturing_cost": 290,
+        "research_cost": 600000,
+        "competition": 5
+      },
+      {
+        "name": "Aerospace Navigation Chip",
+        "sector": "Aerospace",
+        "demand": 8,
+        "manufacturing_cost": 305,
+        "research_cost": 660000,
+        "competition": 5
+      },
+      {
+        "name": "Drone Airframe",
+        "sector": "Aerospace",
+        "demand": 9,
+        "manufacturing_cost": 330,
+        "research_cost": 710000,
+        "competition": 5
+      },
+      {
+        "name": "Altitude Control System",
+        "sector": "Aerospace",
+        "demand": 7,
+        "manufacturing_cost": 315,
+        "research_cost": 690000,
+        "competition": 5
+      },
+      {
+        "name": "Space Habitat Display",
+        "sector": "Aerospace",
+        "demand": 1,
+        "manufacturing_cost": 260,
+        "research_cost": 610000,
+        "competition": 5
+      },
+      {
+        "name": "Rocket Recovery System",
+        "sector": "Aerospace",
+        "demand": 2,
+        "manufacturing_cost": 470,
+        "research_cost": 980000,
+        "competition": 5
+      },
+      {
+        "name": "Aviation Safety Sensor",
+        "sector": "Aerospace",
+        "demand": 7,
+        "manufacturing_cost": 240,
+        "research_cost": 560000,
+        "competition": 5
+      },
+      {
+        "name": "Solar Wing Assembly",
+        "sector": "Aerospace",
+        "demand": 4,
+        "manufacturing_cost": 300,
+        "research_cost": 650000,
+        "competition": 5
+      },
+      {
+        "name": "Hypersonic Engine Coil",
+        "sector": "Aerospace",
+        "demand": 2,
+        "manufacturing_cost": 520,
+        "research_cost": 1100000,
+        "competition": 5
+      },
+      {
+        "name": "Satellite Imaging Camera",
+        "sector": "Aerospace",
+        "demand": 9,
+        "manufacturing_cost": 350,
+        "research_cost": 760000,
+        "competition": 5
+      },
+      {
+        "name": "Aero Materials Composite",
+        "sector": "Aerospace",
+        "demand": 3,
+        "manufacturing_cost": 280,
+        "research_cost": 600000,
+        "competition": 5
+      },
+      {
+        "name": "Air Traffic AI Module",
+        "sector": "Aerospace",
+        "demand": 8,
+        "manufacturing_cost": 240,
+        "research_cost": 540000,
+        "competition": 5
+      },
+      {
+        "name": "Spacecraft Power Cell",
+        "sector": "Aerospace",
+        "demand": 5,
+        "manufacturing_cost": 360,
+        "research_cost": 820000,
+        "competition": 5
+      },
+      {
+        "name": "Autopilot Flight Suite",
+        "sector": "Aerospace",
+        "demand": 7,
+        "manufacturing_cost": 310,
+        "research_cost": 700000,
+        "competition": 5
+      },
+      {
+        "name": "Launch Vehicle Sensor",
+        "sector": "Aerospace",
+        "demand": 3,
+        "manufacturing_cost": 380,
+        "research_cost": 820000,
+        "competition": 5
+      },
+      {
+        "name": "Aero Data Relay",
+        "sector": "Aerospace",
+        "demand": 6,
+        "manufacturing_cost": 225,
+        "research_cost": 500000,
+        "competition": 5
+      },
+      {
+        "name": "Thermal Shield Tile",
+        "sector": "Aerospace",
+        "demand": 1,
+        "manufacturing_cost": 340,
+        "research_cost": 720000,
+        "competition": 5
+      },
+      {
+        "name": "Orbital Maintenance Robot",
+        "sector": "Aerospace",
+        "demand": 4,
+        "manufacturing_cost": 440,
+        "research_cost": 960000,
+        "competition": 5
+      }
+    ]
+  }
+}

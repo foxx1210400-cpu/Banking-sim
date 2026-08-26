@@ -34,6 +34,14 @@ class StockMarket:
                 growth_rate=profile.get("growth_rate", 0.0),
             )
 
+    def view_stocks(self):
+        if not self.stocks:
+            print("No stocks available.")
+            return
+
+        for stock in self.stocks.values():
+            print(f"{stock.ticker} | {stock.name} | {stock.sector} | ${stock.price:.2f}")
+
     def next_day(self, player):
         for stock in self.stocks.values():
             stock.update_price()

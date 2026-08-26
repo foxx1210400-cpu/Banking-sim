@@ -1,7 +1,4 @@
-try:
-    from ui.gui_components import make_button, write_to_textbox
-except ImportError:
-    from banking_sim.ui.gui_components import make_button, write_to_textbox
+from ui.gui_components import make_button, write_to_textbox
 
 
 def build_sector_menu(sidebar, sectors, callback):

@@ -46,6 +46,7 @@ def options(player):
 
         elif user_choice == 5:
             market.view_stocks()
+            input("\nPress Enter to continue...")
 
         elif user_choice == 6:
             ticker = input("Ticker: ").upper()

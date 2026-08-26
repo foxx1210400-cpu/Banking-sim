@@ -1,7 +1,4 @@
-try:
-    from ui.gui_components import write_to_textbox
-except ImportError:
-    from banking_sim.ui.gui_components import write_to_textbox
+from ui.gui_components import write_to_textbox
 
 
 def show_all_stocks(market, header, textbox, refresh_header):

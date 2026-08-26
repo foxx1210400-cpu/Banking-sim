@@ -1,0 +1,1 @@
+"""UI package compatibility wrapper."""

@@ -49,6 +49,8 @@ class Product:
         self.annual_cost = 0.0
         self.annual_profit = 0.0
         self.market_share = 0.0
+        self.marketing_budget = 0.0
+        self.customer_loyalty = 10.0
 
     @classmethod
     def from_json(cls, data):
@@ -114,6 +116,8 @@ class Product:
             "annual_cost": self.annual_cost,
             "annual_profit": self.annual_profit,
             "market_share": self.market_share,
+            "marketing_budget": self.marketing_budget,
+            "customer_loyalty": self.customer_loyalty,
         }
 
     @staticmethod

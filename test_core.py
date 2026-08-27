@@ -22,6 +22,7 @@ class CoreGameTests(unittest.TestCase):
     def test_player_uses_one_bank_balance(self):
         player = Player()
         self.assertFalse(hasattr(player, "cash"))
+        self.assertEqual(player.bank, 100000.0)
 
     def test_annual_run_is_idempotent_for_same_year(self):
         random.seed(7)
@@ -79,17 +80,21 @@ class CoreGameTests(unittest.TestCase):
 
     def test_annual_financial_formula(self):
         company = Company("Formula Co", "Food")
-        company.cash = 100000
-        product = Product("Widget", 100, 10, base_demand=10, competition=1)
+        company.cash = 1000000
+        product = Product("Widget", 20, 10, base_demand=10, competition=1)
         product.annual_production_quota = 100
         company.products.append(product)
         summary = company.run_year(2000)
         expected_manufacturing = 100 * 10
         expected_operating = summary["revenue"] * 0.05
-        expected_pre_tax = summary["revenue"] - expected_manufacturing - expected_operating
+        expected_employee = 15 * 30000
+        expected_factory = 1 * 15000
+        expected_pre_tax = summary["revenue"] - expected_manufacturing - expected_operating - expected_employee - expected_factory
         expected_taxes = max(expected_pre_tax, 0) * 0.20
         self.assertEqual(summary["manufacturing_cost"], expected_manufacturing)
         self.assertAlmostEqual(summary["operating_expenses"], expected_operating)
+        self.assertEqual(summary["employee_expenses"], expected_employee)
+        self.assertEqual(summary["factory_maintenance"], expected_factory)
         self.assertAlmostEqual(summary["taxes"], expected_taxes)
         self.assertAlmostEqual(summary["net_income"], expected_pre_tax - expected_taxes)
 
@@ -104,6 +109,30 @@ class CoreGameTests(unittest.TestCase):
         summary = company.run_year(2000)
         self.assertGreater(second.units_sold, 0)
         self.assertGreater(summary["units_sold"], second.units_sold)
+
+    def test_marketing_increases_demand_and_is_expensed(self):
+        company = Company("Marketing Co", "Food")
+        company.cash = 1000000
+        product = Product("Widget", 20, 10, base_demand=8, competition=1)
+        product.annual_production_quota = 1000
+        product.marketing_budget = 10000
+        company.products.append(product)
+        summary = company.run_year(2000)
+        self.assertEqual(summary["marketing_expenses"], 10000)
+        self.assertGreater(product.customer_loyalty, 10)
+        self.assertGreater(company.reputation, 10)
+
+    def test_stock_transactions_apply_tax(self):
+        player = Player()
+        market = StockMarket()
+        ticker = next(iter(market.stocks))
+        stock = market.stocks[ticker]
+        player.bank = stock.price * 3 * 1.01
+        market.buy_stock(player, ticker, 3)
+        self.assertAlmostEqual(player.bank, 0)
+        proceeds = stock.price * 3 * 0.99
+        market.sell_stock(player, ticker, 3)
+        self.assertAlmostEqual(player.bank, proceeds)
 
 
 if __name__ == "__main__":

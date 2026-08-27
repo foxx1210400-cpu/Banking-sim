@@ -2,6 +2,7 @@ import json
 import random
 from pathlib import Path
 from stock_class import Stock
+from config import STOCK_TRANSACTION_TAX_RATE
 from logger import logger
 
 class StockMarket:
@@ -86,11 +87,13 @@ class StockMarket:
 
         stock = self.stocks[ticker]
         cost = stock.price * shares
+        transaction_tax = cost * STOCK_TRANSACTION_TAX_RATE
+        total_cost = cost + transaction_tax
 
-        if player.bank < cost:
+        if player.bank < total_cost:
             return "You don't have enough money."
 
-        player.bank -= cost
+        player.bank -= total_cost
 
         if ticker in player.portfolio:
             old_shares = player.portfolio[ticker]["shares"]
@@ -110,7 +113,7 @@ class StockMarket:
 
             logger.info("Bought %s shares of %s at %.2f", shares, ticker, stock.price)
 
-        return f"Bought {shares} shares of {ticker} at ${stock.price} each."
+        return f"Bought {shares} shares of {ticker} at ${stock.price} each. Tax: ${transaction_tax:,.2f}."
 
     def sell_stock(self, player, ticker, shares):
         if shares <= 0:
@@ -121,14 +124,15 @@ class StockMarket:
 
         stock = self.stocks[ticker]
         revenue = stock.price * shares
+        transaction_tax = revenue * STOCK_TRANSACTION_TAX_RATE
 
-        player.bank += revenue
+        player.bank += revenue - transaction_tax
         player.portfolio[ticker]["shares"] -= shares
 
         if player.portfolio[ticker]["shares"] == 0:
             del player.portfolio[ticker]
 
-        return f"Sold {shares} shares of {ticker} at ${stock.price} each."
+        return f"Sold {shares} shares of {ticker} at ${stock.price} each. Tax: ${transaction_tax:,.2f}."
 
     def portfolio_value(self, player):
         total = 0

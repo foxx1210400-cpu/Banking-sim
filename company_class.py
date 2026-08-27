@@ -1,6 +1,8 @@
+from typing import Any
+
 from create_product import ProductCreator
 from company_logic import simulate_company_year
-from config import FACTORY_CAPACITY, FACTORY_COST
+from config import FACTORY_ANNUAL_MAINTENANCE, FACTORY_CAPACITY, FACTORY_COST
 from logger import logger
 
 
@@ -27,8 +29,13 @@ class Company:
         self.production_capacity = self.factory_capacity
         self.factory_cost = FACTORY_COST
         self.bankrupt = False
+        self.reputation = 10.0
+        self.factory_maintenance = FACTORY_ANNUAL_MAINTENANCE
+        self.marketing_expenses = 0.0
+        self.employee_count = 0
+        self.employee_expenses = 0.0
         self.last_year_run = None
-        self.last_year_summary = None
+        self.last_year_summary: dict[str, Any] | None = None
         self.products = []
 
     def invest(self, amount):
@@ -85,7 +92,9 @@ class Company:
         self.cash -= product.research_cost
         return self.add_product(product)
 
-    def run_year(self, current_year=None):
+    def run_year(self, current_year: int | None = None) -> dict[str, Any]:
+        if current_year is not None and self.last_year_run == current_year and self.last_year_summary is not None:
+            return self.last_year_summary
         if self.bankrupt:
             return {
                 "revenue": 0,
@@ -95,8 +104,6 @@ class Company:
                 "units_unsold": self.total_inventory,
                 "inventory": self.total_inventory,
             }
-        if current_year is not None and self.last_year_run == current_year:
-            return self.last_year_summary
         summary = simulate_company_year(self)
         if self.cash <= 0:
             self.bankrupt = True
@@ -124,6 +131,11 @@ class Company:
             "factory_count": self.factory_count,
             "production_capacity": self.production_capacity,
             "bankrupt": self.bankrupt,
+            "reputation": self.reputation,
+            "marketing_expenses": self.marketing_expenses,
+            "employee_count": self.employee_count,
+            "employee_expenses": self.employee_expenses,
+            "factory_maintenance": self.factory_maintenance,
         }
 
     def value(self):

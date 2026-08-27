@@ -1,7 +1,17 @@
 from __future__ import annotations
 
 import random
-from config import OPERATING_EXPENSE_RATE, PRICE_ELASTICITY, TAX_RATE
+from config import (
+    EMPLOYEE_ANNUAL_COST,
+    EMPLOYEES_PER_FACTORY,
+    EMPLOYEES_PER_PRODUCT,
+    FACTORY_ANNUAL_MAINTENANCE,
+    MARKETING_EFFECT_CAP,
+    MARKETING_EFFECT_SCALE,
+    OPERATING_EXPENSE_RATE,
+    PRICE_ELASTICITY,
+    TAX_RATE,
+)
 from logger import logger
 
 
@@ -29,10 +39,19 @@ def calculate_product_year(product, planned_production, noise=None):
     if noise is None:
         noise = clamp(random.gauss(1.0, 0.03), 0.9, 1.1)
 
+    marketing_effect = min(
+        MARKETING_EFFECT_CAP,
+        product.marketing_budget / (product.marketing_budget + MARKETING_EFFECT_SCALE),
+    )
+    reputation_effect = 1.0 + getattr(product, "company_reputation", 0.0) / 200.0
+    loyalty_effect = 1.0 + getattr(product, "customer_loyalty", 10.0) / 250.0
     demand_factor = clamp(
         (product.base_demand / 10.0)
         * (1.0 / (1.0 + product.competition * 0.15))
         * calculate_price_factor(product)
+        * (1.0 + marketing_effect)
+        * reputation_effect
+        * loyalty_effect
         * noise,
         0.0,
         1.0,
@@ -51,6 +70,7 @@ def calculate_product_year(product, planned_production, noise=None):
         "manufacturing_cost": manufacturing_cost,
         "demand_limit": demand_limit,
         "price_factor": calculate_price_factor(product),
+        "marketing_effect": marketing_effect,
     }
 
 
@@ -60,9 +80,11 @@ def simulate_company_year(company):
     total_units_sold = 0
     total_units_unsold = 0
     total_inventory = 0
+    total_marketing = 0.0
     remaining_capacity = max(0, int(getattr(company, "production_capacity", 0)))
 
     for product in company.products:
+        product.company_reputation = getattr(company, "reputation", 0.0)
         planned_production = min(
             max(0, int(getattr(product, "annual_production_quota", 0))),
             remaining_capacity,
@@ -87,17 +109,36 @@ def simulate_company_year(company):
         total_units_sold += metrics["units_sold"]
         total_units_unsold += metrics["units_unsold"]
         total_inventory += metrics["inventory"]
+        total_marketing += max(0.0, float(getattr(product, "marketing_budget", 0.0)))
 
+        sell_through = metrics["units_sold"] / max(metrics["units_sold"] + metrics["units_unsold"], 1)
+        loyalty_change = (sell_through - 0.5) * 12.0 + metrics["marketing_effect"] * 4.0
+        product.customer_loyalty = clamp(getattr(product, "customer_loyalty", 10.0) + loyalty_change, 0.0, 100.0)
+
+    employee_count = max(
+        1,
+        company.factory_count * EMPLOYEES_PER_FACTORY + len(company.products) * EMPLOYEES_PER_PRODUCT,
+    )
+    employee_cost = employee_count * EMPLOYEE_ANNUAL_COST
+    factory_maintenance = company.factory_count * getattr(company, "factory_maintenance", FACTORY_ANNUAL_MAINTENANCE)
     operating_expenses = total_revenue * OPERATING_EXPENSE_RATE
-    pre_tax_profit = total_revenue - total_manufacturing_cost - operating_expenses
+    pre_tax_profit = total_revenue - total_manufacturing_cost - operating_expenses - total_marketing - employee_cost - factory_maintenance
     taxes = max(pre_tax_profit, 0.0) * TAX_RATE
     net_income = pre_tax_profit - taxes
-    total_expenses = total_manufacturing_cost + operating_expenses + taxes
+    total_expenses = total_manufacturing_cost + operating_expenses + total_marketing + employee_cost + factory_maintenance + taxes
+
+    average_sell_through = total_units_sold / max(total_units_sold + total_units_unsold, 1)
+    reputation_change = clamp((average_sell_through - 0.5) * 8.0 + min(total_marketing / MARKETING_EFFECT_SCALE, 3.0), -5.0, 5.0)
+    company.reputation = clamp(getattr(company, "reputation", 10.0) + reputation_change, 0.0, 100.0)
 
     company.revenue = total_revenue
     company.expenses = total_expenses
     company.operating_expenses = operating_expenses
     company.taxes = taxes
+    company.marketing_expenses = total_marketing
+    company.employee_count = employee_count
+    company.employee_expenses = employee_cost
+    company.factory_maintenance = factory_maintenance
     company.net_income = net_income
     company.cash += net_income
     company.total_revenue += total_revenue
@@ -112,6 +153,11 @@ def simulate_company_year(company):
         "revenue": total_revenue,
         "manufacturing_cost": total_manufacturing_cost,
         "operating_expenses": operating_expenses,
+        "marketing_expenses": total_marketing,
+        "employee_expenses": employee_cost,
+        "factory_maintenance": factory_maintenance,
+        "employee_count": employee_count,
+        "reputation": company.reputation,
         "taxes": taxes,
         "expenses": total_expenses,
         "pre_tax_profit": pre_tax_profit,

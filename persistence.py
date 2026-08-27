@@ -26,6 +26,8 @@ def _product_to_dict(product):
         "annual_cost": product.annual_cost,
         "annual_profit": product.annual_profit,
         "market_share": product.market_share,
+        "marketing_budget": product.marketing_budget,
+        "customer_loyalty": product.customer_loyalty,
     }
 
 
@@ -49,6 +51,8 @@ def _company_to_dict(company):
         "total_inventory": company.total_inventory,
         "factory_count": company.factory_count,
         "factory_capacity": company.factory_capacity,
+        "reputation": company.reputation,
+        "factory_maintenance": company.factory_maintenance,
         "bankrupt": company.bankrupt,
         "products": [_product_to_dict(product) for product in company.products],
     }
@@ -71,7 +75,7 @@ def _stock_to_dict(stock):
     }
 
 
-def save_game(player, market, filename="savegame.json"):
+def save_game(player, market, filename: str | Path = "savegame.json"):
     data = {
         "version": 1,
         "player": {
@@ -87,7 +91,7 @@ def save_game(player, market, filename="savegame.json"):
     Path(filename).write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
-def load_game(filename="savegame.json"):
+def load_game(filename: str | Path = "savegame.json"):
     data = json.loads(Path(filename).read_text(encoding="utf-8"))
     player_data = data["player"]
     player = Player()

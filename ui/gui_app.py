@@ -100,12 +100,14 @@ class BankingLifeSim(tk.Tk):
         metrics = tk.Frame(self.content, bg=C["paper"]); metrics.pack(fill="x", pady=(0, 18))
         company = self.player.company
         company_capital = company.cash if company else 0
+        company_value = company.value() if company else 0
         portfolio = self.market.portfolio_value(self.player)
         net_worth = self.market.net_worth(self.player)
         self._metric(metrics, "Bank balance", f"${self.player.bank:,.0f}", "Liquid funds", C["gold"], 0)
         self._metric(metrics, "Company capital", f"${company_capital:,.0f}", "Operating balance", C["green"], 1)
-        self._metric(metrics, "Portfolio value", f"${portfolio:,.0f}", "Current holdings", C["blue"], 2)
-        self._metric(metrics, "Total net worth", f"${net_worth:,.0f}", "All assets", C["red"], 3)
+        self._metric(metrics, "Company value", f"${company_value:,.0f}", "Assets minus debt", C["blue"], 2)
+        self._metric(metrics, "Portfolio value", f"${portfolio:,.0f}", "Current holdings", C["navy"], 3)
+        self._metric(metrics, "Net worth", f"${net_worth:,.0f}", "All assets", C["red"], 4)
         row = tk.Frame(self.content, bg=C["paper"]); row.pack(fill="both", expand=True)
         left = tk.Frame(row, bg=C["paper"]); left.pack(side="left", fill="both", expand=True, padx=(0, 9))
         right = tk.Frame(row, bg=C["paper"], width=310); right.pack(side="right", fill="y", padx=(9, 0)); right.pack_propagate(False)
@@ -125,11 +127,17 @@ class BankingLifeSim(tk.Tk):
         subtitle = f"{company.sector}  ·  {company.factory_count} factories  ·  {company.production_capacity:,} units capacity" if company else "Build a company, launch a product, and make your first annual decision."
         tk.Label(card, text=subtitle, bg=C["white"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", padx=22, pady=(3, 17))
         stats = tk.Frame(card, bg=C["white"]); stats.pack(fill="x", padx=22, pady=(0, 20))
-        values = [("Annual revenue", company.revenue if company else 0), ("Net income", company.net_income if company else 0), ("Inventory", company.total_inventory if company else 0), ("Products", len(company.products) if company else 0)]
+        values = [
+            ("Annual revenue", company.revenue if company else 0),
+            ("Net income", company.net_income if company else 0),
+            ("Inventory", company.total_inventory if company else 0),
+            ("Debt", company.debt if company else 0),
+            ("Company value", company.value() if company else 0),
+        ]
         for i, (label, value) in enumerate(values):
-            block = tk.Frame(stats, bg=C["white"]); block.grid(row=0, column=i, sticky="w", padx=(0, 28))
+            block = tk.Frame(stats, bg=C["white"]); block.grid(row=0, column=i, sticky="w", padx=(0, 20))
             tk.Label(block, text=label, bg=C["white"], fg=C["muted"], font=("Segoe UI", 9)).pack(anchor="w")
-            shown = f"${value:,.0f}" if i < 2 else f"{value:,}"
+            shown = f"${value:,.0f}" if i in (0, 1, 3, 4) else f"{value:,}"
             tk.Label(block, text=shown, bg=C["white"], fg=C["ink"], font=("Segoe UI", 12, "bold")).pack(anchor="w", pady=(4, 0))
 
     def _watchlist(self, parent):
@@ -167,6 +175,8 @@ class BankingLifeSim(tk.Tk):
         tk.Button(top, text="Sell company", command=self.open_sell_company, bg="#fcebea", fg=C["red"], relief="flat", padx=12, pady=8, font=("Segoe UI", 9, "bold")).pack(side="right", padx=(8, 0))
         tk.Button(top, text="Buy factory", command=self.buy_factory, bg=C["blue"], fg=C["white"], relief="flat", padx=12, pady=8, font=("Segoe UI", 9, "bold")).pack(side="right")
         tk.Label(self.content, text=f"Capital ${company.cash:,.0f}   |   Capacity {company.production_capacity:,} units   |   {company.factory_count} factories", bg=C["paper"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", pady=(0, 12))
+        tk.Label(self.content, text=f"Reputation {company.reputation:.0f}/100   |   Employees {company.employee_count}   |   Annual factory maintenance ${company.factory_maintenance:,.0f}", bg=C["paper"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", pady=(0, 12))
+        tk.Label(self.content, text=f"Last annual costs: marketing ${company.marketing_expenses:,.0f}   |   employees ${company.employee_expenses:,.0f}   |   operating costs ${company.operating_expenses:,.0f}   |   taxes ${company.taxes:,.0f}", bg=C["paper"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", pady=(0, 12))
         card = self._card(self.content); card.pack(fill="both", expand=True)
         tk.Label(card, text="ANNUAL PRODUCTION PLAN", bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=22, pady=(18, 10))
         if not company.products:
@@ -230,7 +240,7 @@ class BankingLifeSim(tk.Tk):
         row = tk.Frame(parent, bg="#fbfcfd", highlightbackground=C["line"], highlightthickness=1); row.pack(fill="x", padx=22, pady=5)
         tk.Label(row, text=product.name, bg="#fbfcfd", fg=C["ink"], font=("Segoe UI", 11, "bold"), width=18, anchor="w").pack(side="left", padx=12, pady=13)
         tk.Label(row, text=f"Price ${product.sale_price:,.2f}\nCost ${product.manufacturing_cost:,.2f}", bg="#fbfcfd", fg=C["muted"], justify="left", anchor="w", font=("Segoe UI", 9)).pack(side="left", padx=10)
-        tk.Label(row, text=f"Supply: {product.annual_production_quota + product.inventory:,}\nDemand: {product.base_demand}/10  |  Competition: {product.competition}/10", bg="#fbfcfd", fg=C["muted"], justify="left", anchor="w", font=("Segoe UI", 9)).pack(side="left", padx=20)
+        tk.Label(row, text=f"Supply: {product.annual_production_quota + product.inventory:,}\nDemand: {product.base_demand}/10  |  Competition: {product.competition}/10\nLoyalty: {product.customer_loyalty:.0f}/100", bg="#fbfcfd", fg=C["muted"], justify="left", anchor="w", font=("Segoe UI", 9)).pack(side="left", padx=20)
         tk.Button(row, text="Edit plan", command=lambda p=product: self.edit_product(p), bg=C["white"], fg=C["blue"], relief="flat", font=("Segoe UI", 9, "bold")).pack(side="right", padx=12)
         tk.Button(row, text="Remove", command=lambda p=product: self.remove_product(p), bg="#fbfcfd", fg=C["red"], relief="flat", font=("Segoe UI", 9, "bold")).pack(side="right")
 
@@ -243,7 +253,6 @@ class BankingLifeSim(tk.Tk):
         if not choice or choice.strip().title() not in sectors: messagebox.showerror("Invalid sector", "Choose one of the listed sectors.", parent=self); return
         sector = choice.strip().title(); cost = SECTOR_STARTUP_COSTS.get(sector, 50000)
         if self.player.bank < cost: messagebox.showerror("Insufficient funds", f"You need ${cost:,.0f} in the bank.", parent=self); return
-        self.player.company = Company(name.strip(), sector); self.player.company.cash = cost; self.player.company.capital_invested = cost; self.player.bank -= cost
         self._create_company(name.strip(), sector)
 
     def _create_company(self, name, sector):
@@ -303,7 +312,9 @@ class BankingLifeSim(tk.Tk):
                 f"revenue ${product.annual_revenue:,.0f}  |  "
                 f"profit ${product.annual_profit:,.0f}\n"
                 f"Inventory: {product.inventory:,} units  |  "
-                f"Manufacturing cost: ${product.manufacturing_cost:,.2f}"
+                f"Manufacturing cost: ${product.manufacturing_cost:,.2f}  |  "
+                f"Marketing: ${product.marketing_budget:,.0f}  |  "
+                f"Loyalty: {product.customer_loyalty:.0f}/100"
             ),
             bg=C["white"],
             fg=C["muted"],
@@ -311,6 +322,7 @@ class BankingLifeSim(tk.Tk):
             font=("Segoe UI", 9),
         ).pack(anchor="w", padx=24, pady=(10, 0))
         quota_value = tk.IntVar(value=min(product.annual_production_quota, self.player.company.production_capacity))
+        marketing_value = tk.DoubleVar(value=product.marketing_budget)
         quota_label = tk.Label(dialog, text="", bg=C["white"], fg=C["blue"], font=("Segoe UI", 14, "bold"))
         quota_label.pack(pady=(16, 4))
         capital_label = tk.Label(dialog, text="", bg=C["white"], fg=C["muted"], font=("Segoe UI", 10))
@@ -318,7 +330,7 @@ class BankingLifeSim(tk.Tk):
         def update_quota(value):
             quota = int(float(value))
             quota_label.config(text=f"Production quota: {quota:,} units")
-            capital_remaining = self.player.company.cash - (quota * product.manufacturing_cost)
+            capital_remaining = self.player.company.cash - (quota * product.manufacturing_cost) - marketing_value.get()
             capital_color = C["green"] if capital_remaining >= 0 else C["red"]
             capital_label.config(text=f"Capital after production: ${capital_remaining:,.2f}", fg=capital_color)
         tk.Scale(dialog, from_=0, to=self.player.company.production_capacity, orient="horizontal", variable=quota_value, command=update_quota, length=320, resolution=1, showvalue=False, troughcolor="#dbe7f2", activebackground=C["blue"], bg=C["white"], highlightthickness=0).pack(padx=24)
@@ -332,11 +344,21 @@ class BankingLifeSim(tk.Tk):
             price_label.config(text=f"${float(value):,.2f} per unit")
         tk.Scale(dialog, from_=0.01, to=price_limit, resolution=0.01, orient="horizontal", variable=price_value, command=update_price, length=320, showvalue=False, troughcolor="#dbe7f2", activebackground=C["blue"], bg=C["white"], highlightthickness=0).pack(padx=24)
         update_price(price_value.get())
+        tk.Label(dialog, text="Marketing budget", bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=24, pady=(18, 4))
+        marketing_label = tk.Label(dialog, text="", bg=C["white"], fg=C["blue"], font=("Segoe UI", 12, "bold"))
+        marketing_label.pack(pady=(0, 4))
+        def update_marketing(value):
+            marketing_label.config(text=f"${float(value):,.0f} per year")
+            update_quota(quota_value.get())
+        tk.Scale(dialog, from_=0, to=max(self.player.company.cash, 1), resolution=100, orient="horizontal", variable=marketing_value, command=update_marketing, length=320, showvalue=False, troughcolor="#dbe7f2", activebackground=C["blue"], bg=C["white"], highlightthickness=0).pack(padx=24)
+        update_marketing(marketing_value.get())
         buttons = tk.Frame(dialog, bg=C["white"]); buttons.pack(fill="x", padx=24, pady=(0, 22))
         def save_plan():
             price = price_value.get()
             if price <= 0: messagebox.showerror("Invalid price", "Sale price must be greater than zero.", parent=dialog); return
-            product.set_year_plan(quota_value.get(), price); dialog.destroy(); self.show_company()
+            product.set_year_plan(quota_value.get(), price)
+            product.marketing_budget = marketing_value.get()
+            dialog.destroy(); self.show_company()
         tk.Button(buttons, text="Cancel", command=dialog.destroy, bg=C["white"], fg=C["muted"], relief="flat", padx=12, pady=8).pack(side="right")
         tk.Button(buttons, text="Save plan", command=save_plan, bg=C["green"], fg=C["white"], relief="flat", padx=14, pady=8, font=("Segoe UI", 9, "bold")).pack(side="right", padx=(0, 8))
         dialog.update_idletasks()
@@ -386,6 +408,12 @@ class BankingLifeSim(tk.Tk):
 
     def advance_year(self):
         company = self.player.company
+        bankruptcy_message = "You have gone bankrupt, the authorities have taken all of the company's possessions to make up for it."
+        if company and company.bankrupt:
+            self.player.company = None
+            self.show_dashboard()
+            messagebox.showinfo("Bankruptcy", bankruptcy_message, parent=self)
+            return
         if company:
             total = sum(p.annual_production_quota for p in company.products)
             if total > company.production_capacity: messagebox.showwarning("Capacity exceeded", "Your annual plan is larger than factory capacity.", parent=self); return
@@ -396,7 +424,14 @@ class BankingLifeSim(tk.Tk):
                 messagebox.showerror("Simulation failed", str(exc), parent=self)
                 return
         else: summary = None
-        self.market.next_year(self.player); self.player.advance_year(); self.show_dashboard()
+        became_bankrupt = company is not None and company.bankrupt
+        self.market.next_year(self.player); self.player.advance_year()
+        if became_bankrupt:
+            self.player.company = None
+        self.show_dashboard()
+        if became_bankrupt:
+            messagebox.showinfo("Bankruptcy", bankruptcy_message, parent=self)
+            return
         if summary: messagebox.showinfo("Annual report", f"Sales: {summary['units_sold']:,} units\nUnsold: {summary['units_unsold']:,} units\nRevenue: ${summary['revenue']:,.0f}\nTaxes: ${summary['taxes']:,.0f}\nNet income: ${summary['net_income']:,.0f}", parent=self)
 
     def invest_in_company(self):
@@ -437,13 +472,57 @@ class BankingLifeSim(tk.Tk):
     def show_stocks(self):
         self._clear("Stock market")
         card = self._card(self.content); card.pack(fill="both", expand=True)
-        table = ttk.Treeview(card, columns=("ticker", "name", "price", "return", "revenue", "profit", "debt", "growth"), show="headings")
+        filters = tk.Frame(card, bg=C["white"])
+        filters.pack(fill="x", padx=14, pady=(14, 4))
+        tk.Label(filters, text="FILTER MARKET", bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(side="left", padx=(8, 14))
+        sector_filter = tk.StringVar(value="All sectors")
+        debt_filter = tk.StringVar(value="Any debt")
+        revenue_filter = tk.StringVar(value="Any revenue")
+        ownership_filter = tk.StringVar(value="All stocks")
+        sector_values = ["All sectors", *sorted({stock.sector for stock in self.market.stocks.values()})]
+        ttk.Combobox(filters, textvariable=sector_filter, values=sector_values, state="readonly", width=16).pack(side="left", padx=3)
+        ttk.Combobox(filters, textvariable=debt_filter, values=["Any debt", "Low debt", "Medium debt", "High debt"], state="readonly", width=14).pack(side="left", padx=3)
+        ttk.Combobox(filters, textvariable=revenue_filter, values=["Any revenue", "Under $1B", "$1B-$10B", "$10B-$100B", "Over $100B"], state="readonly", width=14).pack(side="left", padx=3)
+        ttk.Combobox(filters, textvariable=ownership_filter, values=["All stocks", "Owned stocks"], state="readonly", width=14).pack(side="left", padx=3)
+
+        table = ttk.Treeview(card, columns=("ticker", "name", "price", "return", "owned", "revenue", "profit", "debt", "growth"), show="headings")
         self.stock_table = table
-        for key, heading, width in [("ticker", "TICKER", 75), ("name", "COMPANY", 180), ("price", "PRICE", 90), ("return", "LAST RETURN", 100), ("revenue", "REVENUE", 120), ("profit", "PROFIT", 120), ("debt", "DEBT", 120), ("growth", "GROWTH", 90)]: table.heading(key, text=heading); table.column(key, width=width, anchor="w")
-        for stock in self.market.stocks.values():
-            last_return = stock.annual_returns[-1] if stock.annual_returns else 0.0
-            table.insert("", "end", iid=stock.ticker, values=(stock.ticker, stock.name, f"${stock.price:,.2f}", f"{last_return:+.2f}%", f"${stock.revenue:,.0f}", f"${stock.profit:,.0f}", f"${stock.debt:,.0f}", f"{stock.growth_rate:.1%}"))
-        table.pack(fill="both", expand=True, padx=14, pady=14); table.bind("<<TreeviewSelect>>", lambda _e: self.stock_details(table))
+        for key, heading, width in [("ticker", "TICKER", 70), ("name", "COMPANY", 165), ("price", "PRICE", 85), ("return", "LAST RETURN", 95), ("owned", "OWNED", 65), ("revenue", "REVENUE", 115), ("profit", "PROFIT", 115), ("debt", "DEBT", 115), ("growth", "GROWTH", 80)]: table.heading(key, text=heading); table.column(key, width=width, anchor="w")
+
+        def debt_level(stock):
+            ratio = stock.debt / max(stock.revenue, 1)
+            return "High debt" if ratio > 0.7 else "Medium debt" if ratio > 0.35 else "Low debt"
+
+        def revenue_matches(stock):
+            if revenue_filter.get() == "Any revenue":
+                return True
+            if revenue_filter.get() == "Under $1B":
+                return stock.revenue < 1_000_000_000
+            if revenue_filter.get() == "$1B-$10B":
+                return 1_000_000_000 <= stock.revenue < 10_000_000_000
+            if revenue_filter.get() == "$10B-$100B":
+                return 10_000_000_000 <= stock.revenue < 100_000_000_000
+            return stock.revenue >= 100_000_000_000
+
+        def apply_filters(*_args):
+            table.delete(*table.get_children())
+            for stock in self.market.stocks.values():
+                owned = self.player.portfolio.get(stock.ticker, {}).get("shares", 0)
+                if sector_filter.get() != "All sectors" and stock.sector != sector_filter.get():
+                    continue
+                if debt_filter.get() != "Any debt" and debt_level(stock) != debt_filter.get():
+                    continue
+                if not revenue_matches(stock):
+                    continue
+                if ownership_filter.get() == "Owned stocks" and owned <= 0:
+                    continue
+                last_return = stock.annual_returns[-1] if stock.annual_returns else 0.0
+                table.insert("", "end", iid=stock.ticker, values=(stock.ticker, stock.name, f"${stock.price:,.2f}", f"{last_return:+.2f}%", owned, f"${stock.revenue:,.0f}", f"${stock.profit:,.0f}", f"${stock.debt:,.0f}", f"{stock.growth_rate:.1%}"))
+
+        table.pack(fill="both", expand=True, padx=14, pady=10); table.bind("<<TreeviewSelect>>", lambda _e: self.stock_details(table))
+        for variable in (sector_filter, debt_filter, revenue_filter, ownership_filter):
+            variable.trace_add("write", apply_filters)
+        apply_filters()
         actions = tk.Frame(card, bg=C["white"]); actions.pack(fill="x", padx=14, pady=(0, 14))
         tk.Button(actions, text="Buy selected", command=lambda: self.trade_stock("buy"), bg=C["green"], fg=C["white"], relief="flat", padx=12, pady=9, font=("Segoe UI", 9, "bold")).pack(side="left", padx=(0, 8))
         tk.Button(actions, text="Sell selected", command=lambda: self.trade_stock("sell"), bg=C["blue"], fg=C["white"], relief="flat", padx=12, pady=9, font=("Segoe UI", 9, "bold")).pack(side="left")

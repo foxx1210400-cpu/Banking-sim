@@ -38,13 +38,13 @@ class Product:
         self.research_cost = research_cost
         self.researched = researched
         self.competition = int(competition)
-        self.production_target = 0
+        self.annual_production_quota = 0
         self.inventory = 0
         self.units_sold = 0
         self.units_unsold = 0
-        self.monthly_revenue = 0.0
-        self.monthly_cost = 0.0
-        self.monthly_profit = 0.0
+        self.annual_revenue = 0.0
+        self.annual_cost = 0.0
+        self.annual_profit = 0.0
         self.market_share = 0.0
 
     @classmethod
@@ -93,23 +93,23 @@ class Product:
             )
         return f"Research cost: ${self.research_cost:,.2f} | Hidden market stats until researched"
 
-    def set_month_plan(self, production_target, sale_price=None):
-        self.production_target = max(0, int(production_target))
+    def set_year_plan(self, production_quota, sale_price=None):
+        self.annual_production_quota = max(0, int(production_quota))
         if sale_price is not None:
             self.sale_price = max(float(sale_price), 1.0)
-        return self.production_target
+        return self.annual_production_quota
 
     def product_status(self):
         return {
             "name": self.name,
             "sale_price": self.sale_price,
-            "production_target": self.production_target,
+            "annual_production_quota": self.annual_production_quota,
             "inventory": self.inventory,
             "units_sold": self.units_sold,
             "units_unsold": self.units_unsold,
-            "monthly_revenue": self.monthly_revenue,
-            "monthly_cost": self.monthly_cost,
-            "monthly_profit": self.monthly_profit,
+            "annual_revenue": self.annual_revenue,
+            "annual_cost": self.annual_cost,
+            "annual_profit": self.annual_profit,
             "market_share": self.market_share,
         }
 

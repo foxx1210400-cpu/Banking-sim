@@ -80,12 +80,12 @@ def manage_products(company):
                 print(
                     f"{index}. {product.name} | "
                     f"Price: ${product.sale_price:,.2f} | "
-                    f"Production: {product.production_target} | "
+                    f"Annual quota: {product.annual_production_quota} | "
                     f"Sold: {product.units_sold} | "
                     f"Unsold: {product.units_unsold} | "
                     f"Inventory: {product.inventory} | "
-                    f"Revenue: ${product.monthly_revenue:,.2f} | "
-                    f"Profit: ${product.monthly_profit:,.2f}"
+                    f"Revenue: ${product.annual_revenue:,.2f} | "
+                    f"Profit: ${product.annual_profit:,.2f}"
                 )
 
         elif choice == 2:
@@ -101,13 +101,13 @@ def manage_products(company):
 
             product = company.products[product_index - 1]
             try:
-                planned_units = int(input(f"How many units of {product.name} should be produced this month? "))
+                planned_units = int(input(f"How many units of {product.name} should be produced this year? "))
             except ValueError:
                 print("Please enter a valid unit count.")
                 continue
 
-            product.set_month_plan(planned_units)
-            print(f"{product.name} production target set to {product.production_target} units.")
+            product.set_year_plan(planned_units)
+            print(f"{product.name} annual production quota set to {product.annual_production_quota} units.")
 
         elif choice == 3:
             try:
@@ -279,15 +279,7 @@ def company_menu(player):
             print(f"You invested ${amount:,.2f} into {company.name}.")
             print(f"Company cash: ${company.cash:,.2f}")
 
-        elif choice == 5:
-            profit = company.run_month()
-            summary = company.get_financial_summary()
-            print(f"Month completed. Net income: ${profit:,.2f}")
-            print(f"Revenue this month: ${summary['revenue']:,.2f}")
-            print(f"Expenses this month: ${summary['expenses']:,.2f}")
-            print(f"Cash now: ${summary['cash']:,.2f}")
-
-        elif choice == 6:
+        elif choice == 4:
             break
         else:
             print("Wrong key")

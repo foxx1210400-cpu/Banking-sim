@@ -54,3 +54,8 @@ class Player:
         if self.month > 12:
             self.month = 1
             self.year += 1
+
+    def advance_year(self):
+        self.month = 1
+        self.day = 1
+        self.year += 1

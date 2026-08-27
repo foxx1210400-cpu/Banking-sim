@@ -92,10 +92,34 @@ def launch():
             f"Portfolio: ${portfolio:,.2f}\nNet worth: ${market.net_worth(player):,.2f}"
         )
 
-    def advance_days(days):
-        for _ in range(days):
-            player.advance_day()
-            market.next_day(player)
+    def advance_year():
+        company = player.company
+        annual_summary = None
+        if company is not None:
+            if company.bankrupt:
+                show_text(f"{company.name} is bankrupt. The game is over.")
+                return
+            if not company.products:
+                show_text("Create and launch a product before advancing the year.")
+                return
+
+            planned_units = sum(product.annual_production_quota for product in company.products)
+            if planned_units <= 0:
+                show_text("Set a production plan before advancing the year.")
+                return
+            if planned_units > company.production_capacity:
+                show_text(
+                    f"Your production plan is {planned_units:,} units, but your factories can only handle "
+                    f"{company.production_capacity:,}. Buy a factory or lower the plan."
+                )
+                return
+
+            annual_summary = company.run_year()
+
+        player.advance_year()
+
+        market.next_year(player)
+
         refresh_header()
         if current_page == "finances":
             show_finances()
@@ -106,6 +130,20 @@ def launch():
                 show_portfolio()
             else:
                 populate_stocks(active_sector.get())
+
+        if company is not None and annual_summary is not None:
+            summary = company.get_financial_summary()
+            show_text(
+                f"Year complete.\n"
+                f"Sales: {annual_summary['units_sold']:,} units\n"
+                f"Unsold: {annual_summary['units_unsold']:,} units\n"
+                f"Revenue: ${annual_summary['revenue']:,.2f}\n"
+                f"Expenses: ${annual_summary['expenses']:,.2f}\n"
+                f"Taxes: ${annual_summary['taxes']:,.2f}\n"
+                f"Net income: ${annual_summary['net_income']:,.2f}\n"
+                f"Capital: ${summary['cash']:,.2f}\n"
+                f"Date: {player.month}/{player.day}/{player.year}"
+            )
 
     def create_company_gui():
         if player.company is not None:
@@ -169,12 +207,16 @@ def launch():
         lines = [
             f"Company: {current_company.name}",
             f"Sector: {current_company.sector}",
-            f"Cash: ${summary['cash']:,.2f}",
+            f"Capital: ${summary['cash']:,.2f}",
             f"Revenue: ${summary['revenue']:,.2f}",
             f"Expenses: ${summary['expenses']:,.2f}",
+            f"Operating expenses: ${summary['operating_expenses']:,.2f}",
+            f"Taxes: ${summary['taxes']:,.2f}",
             f"Net income: ${summary['net_income']:,.2f}",
             f"Debt: ${summary['debt']:,.2f}",
             f"Capital invested: ${summary['capital_invested']:,.2f}",
+            f"Factories: {summary['factory_count']} | Capacity: {summary['production_capacity']:,} units/month",
+            f"Status: {'BANKRUPT' if summary['bankrupt'] else 'Operating'}",
             f"Units sold: {summary['total_units_sold']}",
             f"Unsold units: {summary['total_units_unsold']}",
             f"Inventory: {summary['total_inventory']}",
@@ -185,9 +227,9 @@ def launch():
             for product in current_company.products:
                 lines.append(
                     f"- {product.name} | Price: ${product.sale_price:,.2f} | "
-                    f"Production: {product.production_target} | Sold: {product.units_sold} | "
-                    f"Inventory: {product.inventory} | Revenue: ${product.monthly_revenue:,.2f} | "
-                    f"Profit: ${product.monthly_profit:,.2f}"
+                    f"Annual quota: {product.annual_production_quota} | Sold: {product.units_sold} | "
+                    f"Inventory: {product.inventory} | Revenue: ${product.annual_revenue:,.2f} | "
+                    f"Profit: ${product.annual_profit:,.2f}"
                 )
         else:
             lines.append("- No products launched yet.")
@@ -273,7 +315,7 @@ def launch():
             return
 
         options = "\n".join(
-            f"{i + 1}. {product.name} | price ${product.sale_price:,.2f} | target {product.production_target} | inventory {product.inventory}"
+            f"{i + 1}. {product.name} | price ${product.sale_price:,.2f} | annual quota {product.annual_production_quota} | inventory {product.inventory}"
             for i, product in enumerate(company.products)
         )
         action_raw = simpledialog.askstring("Manage Products", f"Select a product action:\n{options}\n\n1. Set production\n2. Set sale price\nEnter action number:")
@@ -299,7 +341,7 @@ def launch():
 
             method_value = method_raw.strip()
             if method_value == "1":
-                amount_raw = simpledialog.askstring("Production Target", f"How many units of {selected_product.name} should be produced this month?")
+                amount_raw = simpledialog.askstring("Annual Production Quota", f"How many units of {selected_product.name} should be produced this year?")
                 if amount_raw is None:
                     return
                 try:
@@ -317,8 +359,8 @@ def launch():
                         f"This would cost ${required_capital:,.2f}, but your company has ${company.cash:,.2f}."
                     )
                     return
-                selected_product.set_month_plan(target)
-                show_text(f"{selected_product.name} production target set to {selected_product.production_target} units.")
+                selected_product.set_year_plan(target)
+                show_text(f"{selected_product.name} annual production quota set to {selected_product.annual_production_quota} units.")
             elif method_value == "2":
                 price_raw = simpledialog.askstring("Sale Price", f"Set the sale price for {selected_product.name}: ")
                 if price_raw is None:
@@ -349,7 +391,7 @@ def launch():
             if product_index < 0 or product_index >= len(company.products):
                 show_text("Invalid product number.")
                 return
-            target_raw = simpledialog.askstring("Production Target", f"How many units of {company.products[product_index].name} should be produced this month?")
+            target_raw = simpledialog.askstring("Annual Production Quota", f"How many units of {company.products[product_index].name} should be produced this year?")
             if target_raw is None:
                 return
             try:
@@ -368,8 +410,8 @@ def launch():
                     f"This would cost ${required_capital:,.2f}, but your company has ${company.cash:,.2f}."
                 )
                 return
-            product.set_month_plan(target)
-            show_text(f"{product.name} production target set to {product.production_target} units.")
+            product.set_year_plan(target)
+            show_text(f"{product.name} annual production quota set to {product.annual_production_quota} units.")
         elif action_choice == 2:
             product_number_raw = simpledialog.askstring("Sale Price", "Enter product number to update sale price:")
             if product_number_raw is None:
@@ -424,38 +466,13 @@ def launch():
         player.company.invest(investment)
         show_text(f"You invested ${investment:,.2f} into {player.company.name}.\nCompany cash: ${player.company.cash:,.2f}")
 
-    def run_company_month():
+    def buy_factory():
         if player.company is None:
             show_text("Create a company first.")
             return
-
-        company = player.company
-        if not company.products:
-            show_text("You have no products to sell this month.")
-            return
-
-        required_capital = sum(product.production_target * product.manufacturing_cost for product in company.products)
-        if company.cash < required_capital:
-            show_text(
-                f"Not enough capital to run this month's production. "
-                f"You need ${required_capital:,.2f} but only have ${company.cash:,.2f}. "
-                f"Lower the production targets or invest more cash."
-            )
-            return
-
-        company.run_month()
-        player.advance_month()
-        refresh_header()
+        result = player.company.buy_factory()
         refresh_company_summary_panel()
-        summary = company.get_financial_summary()
-        show_text(
-            f"Month complete.\n"
-            f"Revenue: ${summary['revenue']:,.2f}\n"
-            f"Expenses: ${summary['expenses']:,.2f}\n"
-            f"Net income: ${summary['net_income']:,.2f}\n"
-            f"Cash: ${summary['cash']:,.2f}\n"
-            f"Date: {player.month}/{player.day}/{player.year}"
-        )
+        show_text(result)
 
     # All stock controls live in this center panel, not the left navigation.
     company_panel = tk.Frame(page, bg="#111111")
@@ -478,12 +495,16 @@ def launch():
             lines = [
                 f"Company: {company.name}",
                 f"Sector: {company.sector}",
-                f"Cash: ${summary['cash']:,.2f}",
+                f"Capital: ${summary['cash']:,.2f}",
                 f"Revenue: ${summary['revenue']:,.2f}",
                 f"Expenses: ${summary['expenses']:,.2f}",
+                f"Operating expenses: ${summary['operating_expenses']:,.2f}",
+                f"Taxes: ${summary['taxes']:,.2f}",
                 f"Net income: ${summary['net_income']:,.2f}",
                 f"Debt: ${summary['debt']:,.2f}",
                 f"Capital invested: ${summary['capital_invested']:,.2f}",
+                f"Factories: {summary['factory_count']} | Capacity: {summary['production_capacity']:,} units/month",
+                f"Status: {'BANKRUPT' if summary['bankrupt'] else 'Operating'}",
                 f"Units sold: {summary['total_units_sold']}",
                 f"Unsold units: {summary['total_units_unsold']}",
                 f"Inventory: {summary['total_inventory']}",
@@ -494,9 +515,9 @@ def launch():
                 for product in company.products:
                     lines.append(
                         f"- {product.name} | Price: ${product.sale_price:,.2f} | "
-                        f"Production: {product.production_target} | Sold: {product.units_sold} | "
-                        f"Inventory: {product.inventory} | Revenue: ${product.monthly_revenue:,.2f} | "
-                        f"Profit: ${product.monthly_profit:,.2f}"
+                        f"Annual quota: {product.annual_production_quota} | Sold: {product.units_sold} | "
+                        f"Inventory: {product.inventory} | Revenue: ${product.annual_revenue:,.2f} | "
+                        f"Profit: ${product.annual_profit:,.2f}"
                     )
             else:
                 lines.append("- No products launched yet.")
@@ -508,7 +529,7 @@ def launch():
     make_button(company_action_bar, "Research", research_and_launch_product).pack(side="left", fill="x", expand=True, padx=(0, 6))
     make_button(company_action_bar, "Products", manage_company_products).pack(side="left", fill="x", expand=True, padx=(0, 6))
     make_button(company_action_bar, "Invest", invest_in_company).pack(side="left", fill="x", expand=True, padx=(0, 6))
-    make_button(company_action_bar, "Run Month", run_company_month).pack(side="left", fill="x", expand=True)
+    make_button(company_action_bar, "Buy Factory", buy_factory).pack(side="left", fill="x", expand=True)
 
     stock_panel = tk.Frame(page, bg="#111111")
     stock_title = tk.Label(stock_panel, text="Stock Market", fg="white", bg="#111111", font=("Segoe UI", 16, "bold"))
@@ -555,7 +576,20 @@ def launch():
             value = stock.price * owned
             gain = value - (holding["avg_price"] * owned)
             holding_details += f"\nAverage cost: ${holding['avg_price']:,.2f}\nMarket value: ${value:,.2f}\nGain/loss: ${gain:,.2f}"
-        detail_label.config(text=f"{stock.name}\n\nTicker: {stock.ticker}\nSector: {stock.sector}\nPrice: ${stock.price:,.2f}{holding_details}")
+        profit_margin = stock.profit / max(stock.revenue, 1.0)
+        detail_label.config(
+            text=(
+                f"{stock.name}\n\nTicker: {stock.ticker}\nSector: {stock.sector}\n"
+                f"Price: ${stock.price:,.2f}\n\n"
+                f"Revenue: ${stock.revenue:,.0f}\n"
+                f"Profit: ${stock.profit:,.0f}\n"
+                f"Profit margin: {profit_margin:.1%}\n"
+                f"Debt: ${stock.debt:,.0f}\n"
+                f"Growth rate: {stock.growth_rate:.1%}\n"
+                f"Performance: {stock.performance:+.1%}"
+                f"{holding_details}"
+            )
+        )
         trade_message.config(text="")
 
     def populate_stocks(sector="All Stocks"):
@@ -629,8 +663,7 @@ def launch():
         refresh_company_summary_panel()
 
     make_button(sidebar, "Finances", show_finances).pack(fill="x")
-    make_button(sidebar, "Next Day", lambda: advance_days(1)).pack(fill="x")
-    make_button(sidebar, "Next Year", lambda: advance_days(365)).pack(fill="x")
+    make_button(sidebar, "Advance Year", advance_year).pack(fill="x")
     make_button(sidebar, "View Stocks", show_stock_menu).pack(fill="x")
     make_button(sidebar, "Company Management", show_company_menu).pack(fill="x")
 

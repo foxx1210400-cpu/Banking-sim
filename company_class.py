@@ -1,5 +1,5 @@
 from create_product import ProductCreator
-from company_logic import simulate_company_month
+from company_logic import simulate_company_year
 
 
 class Company:
@@ -9,6 +9,8 @@ class Company:
         self.cash = 0
         self.revenue = 0
         self.expenses = 0
+        self.operating_expenses = 0
+        self.taxes = 0
         self.net_income = 0
         self.debt = 0
         self.capital_invested = 0
@@ -18,6 +20,11 @@ class Company:
         self.total_units_sold = 0
         self.total_units_unsold = 0
         self.total_inventory = 0
+        self.factory_count = 1
+        self.factory_capacity = 50000
+        self.production_capacity = self.factory_capacity
+        self.factory_cost = 100000
+        self.bankrupt = False
         self.products = []
 
     def invest(self, amount):
@@ -27,6 +34,17 @@ class Company:
         self.cash += amount
         self.capital_invested += amount
         return f"Invested ${amount:,.2f} into {self.name}."
+
+    def buy_factory(self):
+        if self.bankrupt:
+            return "This company is bankrupt."
+        if self.cash < self.factory_cost:
+            return f"You need ${self.factory_cost:,.2f} to buy a factory."
+
+        self.cash -= self.factory_cost
+        self.factory_count += 1
+        self.production_capacity = self.factory_count * self.factory_capacity
+        return f"Factory purchased. Production capacity is now {self.production_capacity:,} units."
 
     def create_product(self, name, sale_price, unit_cost, base_demand=100, sector=None, manufacturing_cost=None, research_cost=0):
         try:
@@ -51,16 +69,28 @@ class Company:
         self.products.append(product)
         return f"{product.name} was added."
 
-    def run_month(self):
-        summary = simulate_company_month(self)
-        self.net_income = summary["net_income"]
-        return summary["net_income"]
+    def run_year(self):
+        if self.bankrupt:
+            return {
+                "revenue": 0,
+                "expenses": 0,
+                "net_income": 0,
+                "units_sold": 0,
+                "units_unsold": self.total_inventory,
+                "inventory": self.total_inventory,
+            }
+        summary = simulate_company_year(self)
+        if self.cash <= 0:
+            self.bankrupt = True
+        return summary
 
     def get_financial_summary(self):
         return {
             "cash": self.cash,
             "revenue": self.revenue,
             "expenses": self.expenses,
+            "operating_expenses": self.operating_expenses,
+            "taxes": self.taxes,
             "net_income": self.net_income,
             "debt": self.debt,
             "capital_invested": self.capital_invested,
@@ -70,6 +100,9 @@ class Company:
             "total_units_sold": self.total_units_sold,
             "total_units_unsold": self.total_units_unsold,
             "total_inventory": self.total_inventory,
+            "factory_count": self.factory_count,
+            "production_capacity": self.production_capacity,
+            "bankrupt": self.bankrupt,
         }
 
     def value(self):

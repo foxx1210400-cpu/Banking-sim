@@ -1,10 +1,12 @@
 import json
+import random
 from pathlib import Path
 from stock_class import Stock
 
 class StockMarket:
     def __init__(self):
         self.stocks = {}
+        self.market_return = 0.0
         self.load_stocks()
 
     def load_stocks(self):
@@ -44,11 +46,15 @@ class StockMarket:
 
     def next_day(self, player):
         for stock in self.stocks.values():
-            stock.update_price()
+            stock.update_price(self.market_return)
 
-            # Trigger a 2-for-1 split if price gets too high
-            if stock.price > 500:
-                self.apply_split(stock, 2, player)
+    def next_year(self, player):
+        for stock in self.stocks.values():
+            stock.update_financials()
+        self.market_return = random.gauss(0.0, 0.08)
+        for stock in self.stocks.values():
+            stock.update_price(self.market_return, annual=True)
+        self.market_return = 0.0
 
     def apply_split(self, stock, ratio, player):
         """Apply a stock split while preserving the player's holding value."""

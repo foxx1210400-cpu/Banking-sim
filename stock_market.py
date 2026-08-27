@@ -2,6 +2,7 @@ import json
 import random
 from pathlib import Path
 from stock_class import Stock
+from logger import logger
 
 class StockMarket:
     def __init__(self):
@@ -11,8 +12,12 @@ class StockMarket:
 
     def load_stocks(self):
         data_file = Path(__file__).with_name("stocks.json")
-        with data_file.open("r", encoding="utf-8") as f:
-            data = json.load(f)
+        try:
+            with data_file.open("r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, json.JSONDecodeError) as exc:
+            logger.exception("Failed to load stock data: %s", exc)
+            return
 
         for s in data["stocks"]:
             sector = s.get("sector", "Unknown")
@@ -49,11 +54,16 @@ class StockMarket:
             stock.update_price(self.market_return)
 
     def next_year(self, player):
+        starting_prices = {ticker: stock.price for ticker, stock in self.stocks.items()}
         for stock in self.stocks.values():
             stock.update_financials()
         self.market_return = random.gauss(0.0, 0.08)
         for stock in self.stocks.values():
             stock.update_price(self.market_return, annual=True)
+            start_price = starting_prices[stock.ticker]
+            stock.annual_returns.append(round((stock.price / start_price - 1.0) * 100.0, 2))
+            stock.price_history.append((player.year, stock.price))
+        logger.info("Market completed annual update for year %s", player.year)
         self.market_return = 0.0
 
     def apply_split(self, stock, ratio, player):
@@ -98,6 +108,8 @@ class StockMarket:
                 "avg_price": stock.price
             }
 
+            logger.info("Bought %s shares of %s at %.2f", shares, ticker, stock.price)
+
         return f"Bought {shares} shares of {ticker} at ${stock.price} each."
 
     def sell_stock(self, player, ticker, shares):
@@ -132,4 +144,5 @@ class StockMarket:
         return total
 
     def net_worth(self, player):
-        return player.cash + player.bank + self.portfolio_value(player)
+        company_value = player.company.value() if player.company else 0
+        return player.bank + self.portfolio_value(player) + company_value

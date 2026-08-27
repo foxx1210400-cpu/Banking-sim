@@ -1,0 +1,23 @@
+SECTOR_STARTUP_COSTS = {
+    "Technology": 250000,
+    "Finance": 150000,
+    "Healthcare": 200000,
+    "Energy": 300000,
+    "Retail": 75000,
+    "Automotive": 275000,
+    "Food": 50000,
+    "Media": 100000,
+    "Aerospace": 400000,
+    "Industrial": 225000,
+}
+
+TAX_RATE = 0.20
+OPERATING_EXPENSE_RATE = 0.05
+PRICE_ELASTICITY = 1.10
+MAX_REVENUE = 1_000_000_000_000
+MIN_REVENUE = 1_000_000
+FACTORY_COST = 100000
+FACTORY_CAPACITY = 50000
+SAVE_FILE = "savegame.json"
+VOLATILITY_ANNUAL_SCALE = 8.0
+VOLATILITY_DAILY_SCALE = 12.0

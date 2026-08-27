@@ -1,5 +1,7 @@
 from create_product import ProductCreator
 from company_logic import simulate_company_year
+from config import FACTORY_CAPACITY, FACTORY_COST
+from logger import logger
 
 
 class Company:
@@ -21,10 +23,12 @@ class Company:
         self.total_units_unsold = 0
         self.total_inventory = 0
         self.factory_count = 1
-        self.factory_capacity = 50000
+        self.factory_capacity = FACTORY_CAPACITY
         self.production_capacity = self.factory_capacity
-        self.factory_cost = 100000
+        self.factory_cost = FACTORY_COST
         self.bankrupt = False
+        self.last_year_run = None
+        self.last_year_summary = None
         self.products = []
 
     def invest(self, amount):
@@ -44,6 +48,7 @@ class Company:
         self.cash -= self.factory_cost
         self.factory_count += 1
         self.production_capacity = self.factory_count * self.factory_capacity
+        logger.info("Factory purchased for %s; capacity=%s", self.name, self.production_capacity)
         return f"Factory purchased. Production capacity is now {self.production_capacity:,} units."
 
     def create_product(self, name, sale_price, unit_cost, base_demand=100, sector=None, manufacturing_cost=None, research_cost=0):
@@ -69,7 +74,18 @@ class Company:
         self.products.append(product)
         return f"{product.name} was added."
 
-    def run_year(self):
+    def research_and_launch(self, product):
+        if product is None:
+            return "No product was provided."
+        if any(existing.name == product.name for existing in self.products):
+            return f"{product.name} is already in your lineup."
+        if self.cash < product.research_cost:
+            return f"You need ${product.research_cost:,.2f} to research {product.name}."
+        product.researched = True
+        self.cash -= product.research_cost
+        return self.add_product(product)
+
+    def run_year(self, current_year=None):
         if self.bankrupt:
             return {
                 "revenue": 0,
@@ -79,9 +95,14 @@ class Company:
                 "units_unsold": self.total_inventory,
                 "inventory": self.total_inventory,
             }
+        if current_year is not None and self.last_year_run == current_year:
+            return self.last_year_summary
         summary = simulate_company_year(self)
         if self.cash <= 0:
             self.bankrupt = True
+        self.last_year_run = current_year
+        self.last_year_summary = summary
+        logger.info("Company %s completed year %s with net income %.2f", self.name, current_year, summary["net_income"])
         return summary
 
     def get_financial_summary(self):
@@ -106,4 +127,6 @@ class Company:
         }
 
     def value(self):
-        return max(self.cash - self.debt, 0)
+        inventory_value = sum(product.inventory * product.manufacturing_cost for product in self.products)
+        factory_value = self.factory_count * self.factory_cost
+        return max(self.cash + inventory_value + factory_value - self.debt, 0)

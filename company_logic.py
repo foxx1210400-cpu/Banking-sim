@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 import random
-
-TAX_RATE = 0.20
-OPERATING_EXPENSE_RATE = 0.05
-PRICE_ELASTICITY = 1.10
+from config import OPERATING_EXPENSE_RATE, PRICE_ELASTICITY, TAX_RATE
+from logger import logger
 
 
 def clamp(value, minimum, maximum):
@@ -62,7 +60,7 @@ def simulate_company_year(company):
     total_units_sold = 0
     total_units_unsold = 0
     total_inventory = 0
-    remaining_capacity = max(0, int(getattr(company, "production_capacity", 0))) * 12
+    remaining_capacity = max(0, int(getattr(company, "production_capacity", 0)))
 
     for product in company.products:
         planned_production = min(
@@ -108,6 +106,7 @@ def simulate_company_year(company):
     company.total_units_sold = getattr(company, "total_units_sold", 0) + total_units_sold
     company.total_units_unsold = getattr(company, "total_units_unsold", 0) + total_units_unsold
     company.total_inventory = total_inventory
+    logger.info("Company %s annual simulation: revenue=%.2f net_income=%.2f", company.name, total_revenue, net_income)
 
     return {
         "revenue": total_revenue,

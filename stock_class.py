@@ -35,9 +35,7 @@
 
 import random
 import math
-
-MAX_REVENUE = 1_000_000_000_000
-MIN_REVENUE = 1_000_000
+from config import MAX_REVENUE, MIN_REVENUE, VOLATILITY_ANNUAL_SCALE, VOLATILITY_DAILY_SCALE
 
 class Stock:
     def __init__(
@@ -68,6 +66,8 @@ class Stock:
         self.starting_profit = profit
         self.starting_debt = debt
         self.performance = 0.0
+        self.price_history = [(2000, self.price)]
+        self.annual_returns = []
         self.randomize_starting_financials()
 
     def randomize_starting_financials(self):
@@ -98,7 +98,7 @@ class Stock:
         self.performance = self.calculate_performance()
 
     def update_price(self, market_return=0.0, annual=False):
-        volatility = self.volatility * 8.0 if annual else self.volatility / 12.0
+        volatility = self.volatility * VOLATILITY_ANNUAL_SCALE if annual else self.volatility / VOLATILITY_DAILY_SCALE
         random_move = random.gauss(0.0, volatility)
 
         annual_return = (self.trend * 5.0) + (self.performance * 0.5)

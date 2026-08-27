@@ -5,19 +5,13 @@ from company_class import Company
 
 class Player:
     def __init__(self):
-        self.cash: float = 100.0
-        self.bank: float = float(1000)
-        self.heat = 0
+        self.bank: float = float(9000000000000)
         self.year = 2000
         self.month = 1
         self.day = 1
 
         self.portfolio = {}
         self.company: Company | None = None
-
-    def change_money(self, cash=0, bank=0):
-        self.cash += cash
-        self.bank += bank
 
     def advance_day(self):
         # Days in each month

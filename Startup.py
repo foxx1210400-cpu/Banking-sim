@@ -3,21 +3,11 @@ from player_class import Player
 from stock_market import StockMarket
 from company_class import Company
 from create_product import ProductCreator
+from config import SECTOR_STARTUP_COSTS
+from logger import logger
 
 market = StockMarket()
-
-STARTUP_COSTS = {
-    "Technology": 250000,
-    "Finance": 150000,
-    "Healthcare": 200000,
-    "Energy": 300000,
-    "Retail": 75000,
-    "Automotive": 275000,
-    "Food": 50000,
-    "Media": 100000,
-    "Aerospace": 400000,
-    "Industrial": 225000,
-}
+STARTUP_COSTS = SECTOR_STARTUP_COSTS
 
 
 def create_company(player):

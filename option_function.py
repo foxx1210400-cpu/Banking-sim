@@ -1,7 +1,7 @@
 def view_bank_account(player):
     while True:
         print("==========================")
-        print("1. View bank/cash balance")
+        print("1. View bank balance")
         print("2. Exit")
         print("==========================")
 
@@ -12,7 +12,6 @@ def view_bank_account(player):
             continue
 
         if user_choice == 1:
-            print("Cash Balance:", player.cash)
             print("Bank Balance:", player.bank)
 
         elif user_choice == 2:

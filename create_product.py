@@ -1,5 +1,8 @@
 import json
+from functools import lru_cache
 from pathlib import Path
+
+from logger import logger
 
 
 RESEARCH_COST_MULTIPLIER = 0.2
@@ -114,6 +117,7 @@ class Product:
         }
 
     @staticmethod
+    @lru_cache(maxsize=4)
     def load_catalog(path="company_products.json"):
         data_file = Path(path)
         if not data_file.exists():
@@ -124,7 +128,11 @@ class Product:
 
         catalog = {}
         for sector, entries in payload.get("products", {}).items():
-            catalog[sector] = [Product.from_json(entry) for entry in entries]
+            try:
+                catalog[sector] = [Product.from_json(entry) for entry in entries]
+            except (KeyError, TypeError, ValueError) as exc:
+                logger.warning("Skipping invalid products in sector %s: %s", sector, exc)
+                catalog[sector] = []
         return catalog
 
     def to_dict(self):

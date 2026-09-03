@@ -51,6 +51,7 @@ def _company_to_dict(company):
         "total_inventory": company.total_inventory,
         "factory_count": company.factory_count,
         "factory_capacity": company.factory_capacity,
+        "employee_count": company.employee_count,
         "reputation": company.reputation,
         "factory_maintenance": company.factory_maintenance,
         "bankrupt": company.bankrupt,

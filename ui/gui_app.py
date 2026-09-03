@@ -174,8 +174,9 @@ class BankingLifeSim(tk.Tk):
         tk.Label(top, text=f"{company.name}  ·  {company.sector}", bg=C["paper"], fg=C["ink"], font=("Segoe UI", 16, "bold")).pack(side="left")
         tk.Button(top, text="Sell company", command=self.open_sell_company, bg="#fcebea", fg=C["red"], relief="flat", padx=12, pady=8, font=("Segoe UI", 9, "bold")).pack(side="right", padx=(8, 0))
         tk.Button(top, text="Buy factory", command=self.buy_factory, bg=C["blue"], fg=C["white"], relief="flat", padx=12, pady=8, font=("Segoe UI", 9, "bold")).pack(side="right")
+        tk.Button(top, text="Manage employees", command=self.manage_employees, bg=C["white"], fg=C["blue"], relief="flat", padx=12, pady=8, font=("Segoe UI", 9, "bold")).pack(side="right", padx=(0, 8))
         tk.Label(self.content, text=f"Capital ${company.cash:,.0f}   |   Capacity {company.production_capacity:,} units   |   {company.factory_count} factories", bg=C["paper"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", pady=(0, 12))
-        tk.Label(self.content, text=f"Reputation {company.reputation:.0f}/100   |   Employees {company.employee_count}   |   Annual factory maintenance ${company.factory_maintenance:,.0f}", bg=C["paper"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", pady=(0, 12))
+        tk.Label(self.content, text=f"Reputation {company.reputation:.0f}/100   |   Employees {company.employee_count}/{company.required_employee_count} needed   |   Workforce efficiency {min(company.staffing_ratio, 1.10):.0%}", bg=C["paper"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", pady=(0, 12))
         tk.Label(self.content, text=f"Last annual costs: marketing ${company.marketing_expenses:,.0f}   |   employees ${company.employee_expenses:,.0f}   |   operating costs ${company.operating_expenses:,.0f}   |   taxes ${company.taxes:,.0f}", bg=C["paper"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", pady=(0, 12))
         card = self._card(self.content); card.pack(fill="both", expand=True)
         tk.Label(card, text="ANNUAL PRODUCTION PLAN", bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=22, pady=(18, 10))
@@ -405,6 +406,29 @@ class BankingLifeSim(tk.Tk):
 
     def buy_factory(self):
         message = self.player.company.buy_factory(); messagebox.showinfo("Factory", message, parent=self); self.show_company()
+
+    def manage_employees(self):
+        company = self.player.company
+        self._focus_for_dialog()
+        action = simpledialog.askstring(
+            "Manage employees",
+            f"Current workforce: {company.employee_count}\n"
+            f"Required for full staffing: {company.required_employee_count}\n\n"
+            "Enter H to hire or L to lay off employees:",
+            parent=self,
+        )
+        if action is None:
+            return
+        action = action.strip().lower()
+        if action not in {"h", "hire", "l", "layoff"}:
+            messagebox.showerror("Invalid action", "Enter H to hire or L to lay off employees.", parent=self)
+            return
+        count = simpledialog.askinteger("Manage employees", "Number of employees:", parent=self, minvalue=1)
+        if count is None:
+            return
+        message = company.hire_employees(count) if action in {"h", "hire"} else company.fire_employees(count)
+        messagebox.showinfo("Employees", message, parent=self)
+        self.show_company()
 
     def advance_year(self):
         company = self.player.company

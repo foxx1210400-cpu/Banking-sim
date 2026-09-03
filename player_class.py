@@ -5,7 +5,7 @@ from company_class import Company
 
 class Player:
     def __init__(self):
-        self.bank: float = 100000.0
+        self.bank: float = 900000.0
         self.year = 2000
         self.month = 1
         self.day = 1

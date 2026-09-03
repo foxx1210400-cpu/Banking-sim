@@ -4,6 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from company_class import Company
+from competitors import CompetitorRegistry
 from create_product import Product
 from persistence import load_game, save_game
 from player_class import Player
@@ -11,6 +12,41 @@ from stock_market import StockMarket
 
 
 class CoreGameTests(unittest.TestCase):
+    def test_understaffing_reduces_capacity_and_payroll_uses_actual_workforce(self):
+        company = Company("Lean Co", "Food")
+        company.cash = 1_000_000
+        product = Product("Widget", 20, 10, base_demand=10, competition=1)
+        product.annual_production_quota = company.production_capacity
+        company.products.append(product)
+        company.fire_employees(8)
+
+        summary = company.run_year(2000)
+
+        self.assertEqual(company.required_employee_count, 15)
+        self.assertEqual(summary["employee_count"], 2)
+        self.assertEqual(summary["employee_expenses"], 60_000)
+        self.assertLess(summary["units_sold"] + summary["units_unsold"], 50_000)
+
+    def test_extra_employees_improve_workforce_efficiency(self):
+        company = Company("Growth Co", "Food")
+        company.hire_employees(5)
+
+        summary = company.run_year(2000)
+
+        self.assertGreater(summary["workforce_efficiency"], 1.0)
+
+    def test_competitors_are_available_only_for_a_player_company(self):
+        player = Player()
+        competitors = CompetitorRegistry()
+        self.assertEqual(competitors.for_player(player), ())
+
+        player.company = Company("Player Foods", "Food")
+        rivals = competitors.for_player(player)
+
+        self.assertTrue(rivals)
+        self.assertTrue(all(rival.sector == "Food" for rival in rivals))
+        self.assertTrue(all(rival.ticker and rival.stock_price > 0 for rival in rivals))
+
     def test_stock_purchase_keeps_exact_share_count(self):
         player = Player()
         player.bank = 10000
@@ -49,6 +85,18 @@ class CoreGameTests(unittest.TestCase):
         self.assertEqual(loaded_player.bank, 5000)
         self.assertEqual(loaded_player.year, 2005)
 
+    def test_save_load_preserves_employee_count(self):
+        player = Player()
+        player.company = Company("Saved Co", "Food")
+        player.company.hire_employees(7)
+        market = StockMarket()
+        with TemporaryDirectory() as folder:
+            path = Path(folder) / "save.json"
+            save_game(player, market, path)
+            loaded_player, _ = load_game(path)
+        assert loaded_player.company is not None
+        self.assertEqual(loaded_player.company.employee_count, 17)
+
     def test_inventory_can_sell_without_new_production(self):
         random.seed(3)
         company = Company("Inventory Co", "Food")
@@ -84,6 +132,7 @@ class CoreGameTests(unittest.TestCase):
         product = Product("Widget", 20, 10, base_demand=10, competition=1)
         product.annual_production_quota = 100
         company.products.append(product)
+        company.hire_employees(5)
         summary = company.run_year(2000)
         expected_manufacturing = 100 * 10
         expected_operating = summary["revenue"] * 0.05

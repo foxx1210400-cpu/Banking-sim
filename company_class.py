@@ -2,7 +2,13 @@ from typing import Any
 
 from create_product import ProductCreator
 from company_logic import simulate_company_year
-from config import FACTORY_ANNUAL_MAINTENANCE, FACTORY_CAPACITY, FACTORY_COST
+from config import (
+    EMPLOYEES_PER_FACTORY,
+    EMPLOYEES_PER_PRODUCT,
+    FACTORY_ANNUAL_MAINTENANCE,
+    FACTORY_CAPACITY,
+    FACTORY_COST,
+)
 from logger import logger
 
 
@@ -32,7 +38,7 @@ class Company:
         self.reputation = 10.0
         self.factory_maintenance = FACTORY_ANNUAL_MAINTENANCE
         self.marketing_expenses = 0.0
-        self.employee_count = 0
+        self.employee_count = EMPLOYEES_PER_FACTORY
         self.employee_expenses = 0.0
         self.last_year_run = None
         self.last_year_summary: dict[str, Any] | None = None
@@ -57,6 +63,34 @@ class Company:
         self.production_capacity = self.factory_count * self.factory_capacity
         logger.info("Factory purchased for %s; capacity=%s", self.name, self.production_capacity)
         return f"Factory purchased. Production capacity is now {self.production_capacity:,} units."
+
+    @property
+    def required_employee_count(self):
+        return max(
+            1,
+            self.factory_count * EMPLOYEES_PER_FACTORY
+            + len(self.products) * EMPLOYEES_PER_PRODUCT,
+        )
+
+    @property
+    def staffing_ratio(self):
+        return self.employee_count / self.required_employee_count
+
+    def hire_employees(self, count):
+        count = int(count)
+        if count <= 0:
+            return "Hire count must be greater than zero."
+        self.employee_count += count
+        return f"Hired {count} employees. Workforce is now {self.employee_count}."
+
+    def fire_employees(self, count):
+        count = int(count)
+        if count <= 0:
+            return "Layoff count must be greater than zero."
+        if count > self.employee_count:
+            return f"You only employ {self.employee_count} people."
+        self.employee_count -= count
+        return f"Laid off {count} employees. Workforce is now {self.employee_count}."
 
     def create_product(self, name, sale_price, unit_cost, base_demand=100, sector=None, manufacturing_cost=None, research_cost=0):
         try:
@@ -134,6 +168,8 @@ class Company:
             "reputation": self.reputation,
             "marketing_expenses": self.marketing_expenses,
             "employee_count": self.employee_count,
+            "required_employee_count": self.required_employee_count,
+            "staffing_ratio": self.staffing_ratio,
             "employee_expenses": self.employee_expenses,
             "factory_maintenance": self.factory_maintenance,
         }

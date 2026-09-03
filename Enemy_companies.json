@@ -1,0 +1,33 @@
+{
+    "sectors": {
+        "Technology": [
+            {"ticker": "NEXA", "name": "Nexa Systems", "sector": "Technology", "market_share": 24.0, "annual_revenue": 14200000000, "products": ["Cloud platform", "Business software"], "aggression": 0.70, "stock_price": 64.20},
+            {"ticker": "CYRN", "name": "Cyren Labs", "sector": "Technology", "market_share": 16.5, "annual_revenue": 8600000000, "products": ["AI tools", "Data hardware"], "aggression": 0.55, "stock_price": 41.80}
+        ],
+        "Finance": [
+            {"ticker": "MRDN", "name": "Meridian Bank", "sector": "Finance", "market_share": 22.0, "annual_revenue": 12800000000, "products": ["Consumer banking", "Business loans"], "aggression": 0.75, "stock_price": 78.40},
+            {"ticker": "VRST", "name": "Verity Financial", "sector": "Finance", "market_share": 14.0, "annual_revenue": 7100000000, "products": ["Wealth management", "Credit services"], "aggression": 0.48, "stock_price": 52.10}
+        ],
+        "Healthcare": [
+            {"ticker": "HLIX", "name": "Helix Health", "sector": "Healthcare", "market_share": 18.0, "annual_revenue": 9400000000, "products": ["Diagnostics", "Medical devices"], "aggression": 0.60, "stock_price": 57.30}
+        ],
+        "Energy": [
+            {"ticker": "ARCL", "name": "ArcLight Energy", "sector": "Energy", "market_share": 20.0, "annual_revenue": 11600000000, "products": ["Solar generation", "Grid storage"], "aggression": 0.68, "stock_price": 49.60}
+        ],
+        "Retail": [
+            {"ticker": "HARB", "name": "Harbor Retail", "sector": "Retail", "market_share": 19.5, "annual_revenue": 6900000000, "products": ["Home goods", "Online retail"], "aggression": 0.52, "stock_price": 35.70}
+        ],
+        "Automotive": [
+            {"ticker": "RIVT", "name": "Rivet Motors", "sector": "Automotive", "market_share": 17.0, "annual_revenue": 10300000000, "products": ["Electric vehicles", "Fleet vehicles"], "aggression": 0.73, "stock_price": 61.90}
+        ],
+        "Food": [
+            {"ticker": "CRST", "name": "Crest Foods", "sector": "Food", "market_share": 21.0, "annual_revenue": 5400000000, "products": ["Packaged foods", "Fresh meals"], "aggression": 0.46, "stock_price": 28.50}
+        ],
+        "Media": [
+            {"ticker": "PRSM", "name": "Prism Media", "sector": "Media", "market_share": 15.5, "annual_revenue": 4300000000, "products": ["Streaming", "Digital advertising"], "aggression": 0.64, "stock_price": 43.20}
+        ],
+        "Aerospace": [
+            {"ticker": "ORBT", "name": "Orbit Aeronautics", "sector": "Aerospace", "market_share": 18.5, "annual_revenue": 8900000000, "products": ["Satellite systems", "Commercial aircraft"], "aggression": 0.58, "stock_price": 70.80}
+        ]
+    }
+}

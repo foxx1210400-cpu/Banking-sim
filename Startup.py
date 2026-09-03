@@ -143,8 +143,9 @@ def company_menu(player):
         print("2. Manage products")
         print("3. Research and launch a product")
         print("4. Invest in company")
-        print("5. Run month")
-        print("6. Exit company menu")
+        print("5. Manage employees")
+        print("6. Buy factory")
+        print("7. Exit company menu")
         print("=========================")
 
         try:
@@ -269,7 +270,29 @@ def company_menu(player):
             print(f"You invested ${amount:,.2f} into {company.name}.")
             print(f"Company cash: ${company.cash:,.2f}")
 
-        elif choice == 4:
+        elif choice == 5:
+            print(
+                f"Employees: {company.employee_count} | "
+                f"Required: {company.required_employee_count} | "
+                f"Workforce efficiency: {min(company.staffing_ratio, 1.10):.0%}"
+            )
+            action = input("Hire or lay off employees? (h/l): ").strip().lower()
+            try:
+                count = int(input("Number of employees: "))
+            except ValueError:
+                print("Please enter a whole number.")
+                continue
+            if action == "h":
+                print(company.hire_employees(count))
+            elif action == "l":
+                print(company.fire_employees(count))
+            else:
+                print("Choose h to hire or l to lay off employees.")
+
+        elif choice == 6:
+            print(company.buy_factory())
+
+        elif choice == 7:
             break
         else:
             print("Wrong key")

@@ -81,6 +81,12 @@ def save_game(player, market, filename: str | Path = "savegame.json"):
         "version": 1,
         "player": {
             "bank": player.bank,
+            "age": player.age,
+            "health": player.health,
+            "happiness": player.happiness,
+            "smarts": player.smarts,
+            "relationships": player.relationships,
+            "event_history": player.event_history,
             "year": player.year,
             "month": player.month,
             "day": player.day,
@@ -96,9 +102,11 @@ def load_game(filename: str | Path = "savegame.json"):
     data = json.loads(Path(filename).read_text(encoding="utf-8"))
     player_data = data["player"]
     player = Player()
-    for field in ("bank", "year", "month", "day", "portfolio"):
+    for field in ("bank", "age", "health", "happiness", "smarts", "relationships", "event_history", "year", "month", "day", "portfolio"):
         if field in player_data:
             setattr(player, field, player_data[field])
+    if "age" not in player_data:
+        player.age = max(1, player.year - 1999)
 
     company_data = player_data.get("company")
     if company_data:

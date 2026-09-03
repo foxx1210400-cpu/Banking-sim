@@ -4,6 +4,7 @@ from tkinter import messagebox, simpledialog, ttk
 from company_class import Company
 from config import SAVE_FILE, SECTOR_STARTUP_COSTS
 from create_product import ProductCreator
+from events import EventManager
 from logger import logger
 from persistence import load_game, save_game
 from player_class import Player
@@ -23,6 +24,7 @@ class BankingLifeSim(tk.Tk):
         self.configure(bg=C["paper"])
         self.player = Player()
         self.market = StockMarket()
+        self.events = EventManager()
         self.page = None
         self._styles()
         self._shell()
@@ -44,16 +46,17 @@ class BankingLifeSim(tk.Tk):
         nav.pack(side="left", fill="y"); nav.pack_propagate(False)
         tk.Label(nav, text="BANKING", bg=C["navy"], fg="#8fb5d3", font=("Segoe UI", 10, "bold")).pack(anchor="w", padx=24, pady=(28, 0))
         tk.Label(nav, text="LIFE SIM", bg=C["navy"], fg=C["white"], font=("Segoe UI", 20, "bold")).pack(anchor="w", padx=24, pady=(0, 42))
-        tk.Label(nav, text="WORKSPACE", bg=C["navy"], fg="#7595ae", font=("Segoe UI", 8, "bold")).pack(anchor="w", padx=24, pady=(0, 10))
+        tk.Label(nav, text="MY LIFE", bg=C["navy"], fg="#7595ae", font=("Segoe UI", 8, "bold")).pack(anchor="w", padx=24, pady=(0, 10))
         self._nav(nav, "▦   Overview", self.show_dashboard, True)
-        self._nav(nav, "▤   Company", self.show_company)
-        self._nav(nav, "◈   Stock Market", self.show_stocks)
-        self._nav(nav, "◫   Portfolio", self.show_portfolio)
+        self._nav(nav, "▤   Job", self.show_jobs)
+        self._nav(nav, "◫   Finances", self.show_finances)
+        self._nav(nav, "♡   Relationships", self.show_relationships)
+        self._nav(nav, "◈   Activities", self.show_activities)
         tk.Frame(nav, bg="#2c4b64", height=1).pack(fill="x", padx=24, pady=28)
-        tk.Label(nav, text="CURRENT YEAR", bg=C["navy"], fg="#7595ae", font=("Segoe UI", 8, "bold")).pack(anchor="w", padx=24)
-        self.year_label = tk.Label(nav, text="", bg=C["navy"], fg=C["white"], font=("Segoe UI", 26, "bold"))
-        self.year_label.pack(anchor="w", padx=24, pady=(2, 0))
-        tk.Label(nav, text="Annual strategy cycle", bg=C["navy"], fg="#9bb1c1", font=("Segoe UI", 9)).pack(anchor="w", padx=24)
+        tk.Label(nav, text="CURRENT AGE", bg=C["navy"], fg="#7595ae", font=("Segoe UI", 8, "bold")).pack(anchor="w", padx=24)
+        self.age_label = tk.Label(nav, text="", bg=C["navy"], fg=C["white"], font=("Segoe UI", 26, "bold"))
+        self.age_label.pack(anchor="w", padx=24, pady=(2, 0))
+        tk.Label(nav, text="One year per life turn", bg=C["navy"], fg="#9bb1c1", font=("Segoe UI", 9)).pack(anchor="w", padx=24)
         tk.Frame(nav, bg=C["navy"]).pack(fill="both", expand=True)
         tk.Label(nav, text="◉  Player account", bg=C["navy"], fg=C["white"], font=("Segoe UI", 10, "bold")).pack(anchor="w", padx=24, pady=(0, 24))
 
@@ -64,7 +67,7 @@ class BankingLifeSim(tk.Tk):
         title_box = tk.Frame(header, bg=C["paper"]); title_box.pack(side="left", fill="y")
         self.eyebrow = tk.Label(title_box, text="WELCOME BACK", bg=C["paper"], fg=C["muted"], font=("Segoe UI", 9, "bold")); self.eyebrow.pack(anchor="w")
         self.page_title = tk.Label(title_box, text="Your financial picture", bg=C["paper"], fg=C["ink"], font=("Segoe UI", 24, "bold")); self.page_title.pack(anchor="w", pady=(3, 0))
-        self.advance_button = tk.Button(header, text="Advance Year  →", command=self.advance_year, bg=C["green"], fg=C["white"], activebackground="#116b4a", activeforeground=C["white"], relief="flat", padx=18, pady=11, font=("Segoe UI", 10, "bold")); self.advance_button.pack(side="right", pady=18)
+        self.advance_button = tk.Button(header, text="Age Up  →", command=self.advance_year, bg=C["green"], fg=C["white"], activebackground="#116b4a", activeforeground=C["white"], relief="flat", padx=18, pady=11, font=("Segoe UI", 10, "bold")); self.advance_button.pack(side="right", pady=18)
         tk.Button(header, text="Save", command=self.save_current_game, bg=C["white"], fg=C["blue"], relief="flat", padx=12, pady=10, font=("Segoe UI", 9, "bold")).pack(side="right", padx=(0, 8), pady=18)
         tk.Button(header, text="Load", command=self.load_saved_game, bg=C["white"], fg=C["blue"], relief="flat", padx=12, pady=10, font=("Segoe UI", 9, "bold")).pack(side="right", padx=(0, 8), pady=18)
         self.content = tk.Frame(self.main, bg=C["paper"]); self.content.pack(fill="both", expand=True, padx=34, pady=(0, 28))
@@ -76,7 +79,106 @@ class BankingLifeSim(tk.Tk):
         for child in self.content.winfo_children(): child.destroy()
         self.eyebrow.config(text="BANKING LIFE SIM")
         self.page_title.config(text=heading)
-        self.year_label.config(text=str(self.player.year))
+        self.age_label.config(text=f"{self.player.age}")
+
+    def _is_adult(self):
+        return self.player.age >= 18
+
+    def _show_locked(self, feature):
+        self._clear(f"{feature} locked")
+        card = self._card(self.content); card.pack(fill="both", expand=True)
+        tk.Label(card, text="A NEW CHAPTER AWAITS", bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=28, pady=(30, 10))
+        tk.Label(card, text=f"{feature} unlocks at age 18", bg=C["white"], fg=C["ink"], font=("Segoe UI", 22, "bold")).pack(anchor="w", padx=28)
+        years = 18 - self.player.age
+        detail = "You are ready to build your financial life." if years <= 0 else f"You have {years} more year{'s' if years != 1 else ''} before you can access {feature.lower()}."
+        tk.Label(card, text=detail, bg=C["white"], fg=C["muted"], wraplength=560, justify="left", font=("Segoe UI", 11)).pack(anchor="w", padx=28, pady=(10, 22))
+        tk.Label(card, text="Use Age Up to continue your life.", bg="#eaf2fb", fg=C["blue"], font=("Segoe UI", 11, "bold"), padx=16, pady=14).pack(anchor="w", padx=28)
+
+    def show_life_event(self, event, summary=None):
+        choices = self.events.choices_for(event)
+        dialog = tk.Toplevel(self)
+        dialog.title(f"Life event: age {self.player.age}")
+        dialog.transient(self)
+        dialog.grab_set()
+        dialog.configure(bg=C["white"])
+        dialog.resizable(False, False)
+        tk.Label(dialog, text=event["category"].upper(), bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=26, pady=(24, 8))
+        tk.Label(dialog, text=event["description"], bg=C["white"], fg=C["ink"], wraplength=500, justify="left", font=("Segoe UI", 15, "bold")).pack(anchor="w", padx=26)
+        tk.Label(dialog, text="What will you do?", bg=C["white"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", padx=26, pady=(10, 16))
+
+        def choose(index):
+            result = self.events.resolve(self.player, event, index)
+            dialog.destroy()
+            self.show_dashboard()
+            effects = ", ".join(f"{field} {amount:+g}" for field, amount in result["effects"].items())
+            messagebox.showinfo("Life event", f"You chose: {result['choice']}\n\nImpact: {effects or 'No measurable change.'}", parent=self)
+            if summary:
+                messagebox.showinfo("Annual report", f"Sales: {summary['units_sold']:,} units\nUnsold: {summary['units_unsold']:,} units\nRevenue: ${summary['revenue']:,.0f}\nTaxes: ${summary['taxes']:,.0f}\nNet income: ${summary['net_income']:,.0f}", parent=self)
+
+        for index, (label, _effects) in enumerate(choices):
+            tk.Button(dialog, text=label, command=lambda value=index: choose(value), bg=C["blue_soft"], fg=C["ink"], activebackground="#d8e8f6", relief="flat", anchor="w", padx=14, pady=10, font=("Segoe UI", 10, "bold")).pack(fill="x", padx=26, pady=4)
+        dialog.protocol("WM_DELETE_WINDOW", lambda: choose(0))
+        dialog.update_idletasks()
+        screen_x = (dialog.winfo_screenwidth() - dialog.winfo_width()) // 2
+        screen_y = (dialog.winfo_screenheight() - dialog.winfo_height()) // 2
+        dialog.geometry(f"+{screen_x}+{screen_y}")
+
+    def _life_choice(self, parent, title, detail, command, color=None):
+        button = tk.Button(
+            parent,
+            text=f"{title}\n{detail}",
+            command=command,
+            bg=color or C["white"],
+            fg=C["ink"],
+            activebackground=C["blue_soft"],
+            relief="flat",
+            anchor="w",
+            justify="left",
+            padx=18,
+            pady=14,
+            font=("Segoe UI", 11, "bold"),
+        )
+        button.pack(fill="x", pady=5)
+        return button
+
+    def show_jobs(self):
+        self._clear("Job")
+        card = self._card(self.content); card.pack(fill="both", expand=True)
+        tk.Label(card, text="YOUR CAREER", bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=28, pady=(28, 8))
+        tk.Label(card, text="Find your path", bg=C["white"], fg=C["ink"], font=("Segoe UI", 22, "bold")).pack(anchor="w", padx=28)
+        detail = "Career choices will appear here when the job system is ready." if self._is_adult() else f"Job options unlock at age 18. {18 - self.player.age} years to go."
+        tk.Label(card, text=detail, bg=C["white"], fg=C["muted"], font=("Segoe UI", 11)).pack(anchor="w", padx=28, pady=(8, 24))
+        tk.Label(card, text="No job selected", bg="#f5f7fa", fg=C["muted"], font=("Segoe UI", 11), padx=18, pady=18).pack(anchor="w", padx=28)
+
+    def show_finances(self):
+        self._clear("Finances")
+        card = self._card(self.content); card.pack(fill="both", expand=True)
+        tk.Label(card, text="MONEY & ASSETS", bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=28, pady=(28, 8))
+        tk.Label(card, text="Your financial life", bg=C["white"], fg=C["ink"], font=("Segoe UI", 22, "bold")).pack(anchor="w", padx=28)
+        tk.Label(card, text=f"Bank balance  ${self.player.bank:,.0f}\nPortfolio value  ${self.market.portfolio_value(self.player):,.0f}", bg=C["white"], fg=C["muted"], justify="left", font=("Segoe UI", 11)).pack(anchor="w", padx=28, pady=(8, 24))
+        self._life_choice(card, "Portfolio", "View your investments", self.show_portfolio, C["blue_soft"] if self._is_adult() else "#f5f7fa")
+        if not self._is_adult():
+            tk.Label(card, text=f"Investing features unlock at age 18. {18 - self.player.age} years to go.", bg=C["white"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", padx=28, pady=(14, 0))
+
+    def show_relationships(self):
+        self._clear("Relationships")
+        card = self._card(self.content); card.pack(fill="both", expand=True)
+        tk.Label(card, text="PEOPLE IN YOUR LIFE", bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=28, pady=(28, 8))
+        tk.Label(card, text="Relationships", bg=C["white"], fg=C["ink"], font=("Segoe UI", 22, "bold")).pack(anchor="w", padx=28)
+        tk.Label(card, text="Your relationships will grow as you move through life.", bg=C["white"], fg=C["muted"], font=("Segoe UI", 11)).pack(anchor="w", padx=28, pady=(8, 24))
+        tk.Label(card, text="No relationships yet", bg="#f5f7fa", fg=C["muted"], font=("Segoe UI", 11), padx=18, pady=18).pack(anchor="w", padx=28)
+
+    def show_activities(self):
+        self._clear("Activities")
+        card = self._card(self.content); card.pack(fill="both", expand=True)
+        tk.Label(card, text="WHAT WILL YOU DO?", bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=28, pady=(28, 8))
+        tk.Label(card, text="Activities", bg=C["white"], fg=C["ink"], font=("Segoe UI", 22, "bold")).pack(anchor="w", padx=28)
+        tk.Label(card, text="Build your financial story and make your next big move.", bg=C["white"], fg=C["muted"], font=("Segoe UI", 11)).pack(anchor="w", padx=28, pady=(8, 20))
+        choices = tk.Frame(card, bg=C["white"]); choices.pack(fill="x", padx=28)
+        self._life_choice(choices, "Company", "Create and manage a company", self.show_company, C["blue_soft"] if self._is_adult() else "#f5f7fa")
+        self._life_choice(choices, "Stock Market", "Buy and sell investments", self.show_stocks, C["blue_soft"] if self._is_adult() else "#f5f7fa")
+        if not self._is_adult():
+            tk.Label(card, text=f"Company and stock market activities unlock at age 18. {18 - self.player.age} years to go.", bg=C["white"], fg=C["muted"], font=("Segoe UI", 10)).pack(anchor="w", padx=28, pady=(14, 0))
 
     def _card(self, parent):
         return tk.Frame(parent, bg=C["white"], highlightbackground=C["line"], highlightthickness=1)
@@ -96,7 +198,7 @@ class BankingLifeSim(tk.Tk):
         tk.Label(body, text=change, bg=C["white"], fg=C["green"] if change.startswith("+") else C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w")
 
     def show_dashboard(self):
-        self._clear("Your financial picture")
+        self._clear("Your life")
         metrics = tk.Frame(self.content, bg=C["paper"]); metrics.pack(fill="x", pady=(0, 18))
         company = self.player.company
         company_capital = company.cash if company else 0
@@ -108,6 +210,11 @@ class BankingLifeSim(tk.Tk):
         self._metric(metrics, "Company value", f"${company_value:,.0f}", "Assets minus debt", C["blue"], 2)
         self._metric(metrics, "Portfolio value", f"${portfolio:,.0f}", "Current holdings", C["navy"], 3)
         self._metric(metrics, "Net worth", f"${net_worth:,.0f}", "All assets", C["red"], 4)
+        life_stats = tk.Frame(self.content, bg=C["paper"]); life_stats.pack(fill="x", pady=(0, 18))
+        self._metric(life_stats, "Health", f"{self.player.health}/100", "Life force", C["green"], 0)
+        self._metric(life_stats, "Happiness", f"{self.player.happiness}/100", "Wellbeing", C["gold"], 1)
+        self._metric(life_stats, "Smarts", f"{self.player.smarts}/100", "Knowledge", C["blue"], 2)
+        self._metric(life_stats, "Relationships", f"{self.player.relationships}/100", "Social life", C["red"], 3)
         row = tk.Frame(self.content, bg=C["paper"]); row.pack(fill="both", expand=True)
         left = tk.Frame(row, bg=C["paper"]); left.pack(side="left", fill="both", expand=True, padx=(0, 9))
         right = tk.Frame(row, bg=C["paper"], width=310); right.pack(side="right", fill="y", padx=(9, 0)); right.pack_propagate(False)
@@ -155,9 +262,12 @@ class BankingLifeSim(tk.Tk):
         tk.Label(card, text="YOUR NEXT MOVE", bg=C["white"], fg=C["muted"], font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=20, pady=(19, 9))
         message = "Create your company" if not company else "Set your annual plan"
         detail = "Choose a sector and begin building your financial story." if not company else "Review your products, prices, and quota before the next year."
+        if not self._is_adult():
+            message = f"Growing up: age {self.player.age}"
+            detail = f"Company and market features unlock at age 18. {18 - self.player.age} years to go."
         tk.Label(card, text=message, bg=C["white"], fg=C["ink"], font=("Segoe UI", 15, "bold")).pack(anchor="w", padx=20)
         tk.Label(card, text=detail, bg=C["white"], fg=C["muted"], wraplength=260, justify="left", font=("Segoe UI", 10)).pack(anchor="w", padx=20, pady=(7, 17))
-        tk.Button(card, text="Open company  →", command=self.show_company, bg=C["blue"], fg=C["white"], relief="flat", padx=14, pady=10, font=("Segoe UI", 10, "bold")).pack(fill="x", padx=20, pady=(0, 20))
+        tk.Button(card, text="Open company  →", command=self.show_company, bg=C["blue"], fg=C["white"], relief="flat", padx=14, pady=10, font=("Segoe UI", 10, "bold"), state="normal" if self._is_adult() else "disabled").pack(fill="x", padx=20, pady=(0, 20))
 
     def _activity(self, parent):
         card = self._card(parent); card.pack(fill="both", expand=True)
@@ -166,6 +276,9 @@ class BankingLifeSim(tk.Tk):
             tk.Label(card, text="•  " + text, bg=C["white"], fg=C["ink"], font=("Segoe UI", 10)).pack(anchor="w", padx=20, pady=(0, 14))
 
     def show_company(self):
+        if not self._is_adult():
+            self._show_locked("Company creation")
+            return
         self._clear("Company management")
         if not self.player.company:
             self._company_setup(); return
@@ -246,6 +359,9 @@ class BankingLifeSim(tk.Tk):
         tk.Button(row, text="Remove", command=lambda p=product: self.remove_product(p), bg="#fbfcfd", fg=C["red"], relief="flat", font=("Segoe UI", 9, "bold")).pack(side="right")
 
     def create_company(self):
+        if not self._is_adult():
+            self._show_locked("Company creation")
+            return
         self._focus_for_dialog()
         name = simpledialog.askstring("Create company", "Company name:", parent=self)
         if not name or not name.strip(): return
@@ -269,6 +385,9 @@ class BankingLifeSim(tk.Tk):
         self.show_company()
 
     def research_product(self):
+        if not self._is_adult():
+            self._show_locked("Company features")
+            return
         company = self.player.company; options = ProductCreator.load_sector_products(company.sector)
         self._focus_for_dialog()
         if not options: messagebox.showinfo("No products", "No products are available for this sector.", parent=self); return
@@ -297,6 +416,9 @@ class BankingLifeSim(tk.Tk):
         self.show_company()
 
     def edit_product(self, product):
+        if not self._is_adult():
+            self._show_locked("Company features")
+            return
         self._focus_for_dialog()
         dialog = tk.Toplevel(self)
         dialog.title("Edit annual plan")
@@ -368,12 +490,18 @@ class BankingLifeSim(tk.Tk):
         dialog.geometry(f"+{screen_x}+{screen_y}")
 
     def remove_product(self, product):
+        if not self._is_adult():
+            self._show_locked("Company features")
+            return
         if not messagebox.askyesno("Remove product", f"Remove {product.name} from your lineup? Existing inventory will be discarded.", parent=self):
             return
         self.player.company.products.remove(product)
         self.show_company()
 
     def open_sell_company(self):
+        if not self._is_adult():
+            self._show_locked("Company features")
+            return
         company = self.player.company
         valuation = company.value()
         base_value = max(valuation, 1)
@@ -405,9 +533,15 @@ class BankingLifeSim(tk.Tk):
         tk.Button(buttons, text="List for sale", command=list_company, bg=C["green"], fg=C["white"], relief="flat", padx=14, pady=8, font=("Segoe UI", 9, "bold")).pack(side="right", padx=(0, 8))
 
     def buy_factory(self):
+        if not self._is_adult():
+            self._show_locked("Company features")
+            return
         message = self.player.company.buy_factory(); messagebox.showinfo("Factory", message, parent=self); self.show_company()
 
     def manage_employees(self):
+        if not self._is_adult():
+            self._show_locked("Company features")
+            return
         company = self.player.company
         self._focus_for_dialog()
         action = simpledialog.askstring(
@@ -438,7 +572,7 @@ class BankingLifeSim(tk.Tk):
             self.show_dashboard()
             messagebox.showinfo("Bankruptcy", bankruptcy_message, parent=self)
             return
-        if company:
+        if company and self._is_adult():
             total = sum(p.annual_production_quota for p in company.products)
             if total > company.production_capacity: messagebox.showwarning("Capacity exceeded", "Your annual plan is larger than factory capacity.", parent=self); return
             try:
@@ -452,13 +586,24 @@ class BankingLifeSim(tk.Tk):
         self.market.next_year(self.player); self.player.advance_year()
         if became_bankrupt:
             self.player.company = None
-        self.show_dashboard()
         if became_bankrupt:
+            self.show_dashboard()
             messagebox.showinfo("Bankruptcy", bankruptcy_message, parent=self)
             return
-        if summary: messagebox.showinfo("Annual report", f"Sales: {summary['units_sold']:,} units\nUnsold: {summary['units_unsold']:,} units\nRevenue: ${summary['revenue']:,.0f}\nTaxes: ${summary['taxes']:,.0f}\nNet income: ${summary['net_income']:,.0f}", parent=self)
+        event = self.events.event_for_age(self.player.age)
+        if event:
+            self.show_life_event(event, summary)
+        else:
+            self.show_dashboard()
+            if summary:
+                messagebox.showinfo("Annual report", f"Sales: {summary['units_sold']:,} units\nUnsold: {summary['units_unsold']:,} units\nRevenue: ${summary['revenue']:,.0f}\nTaxes: ${summary['taxes']:,.0f}\nNet income: ${summary['net_income']:,.0f}", parent=self)
+        if self.player.age == 18:
+            messagebox.showinfo("Adulthood", "You are 18. Company creation, stocks, and your portfolio are now unlocked.", parent=self)
 
     def invest_in_company(self):
+        if not self._is_adult():
+            self._show_locked("Company features")
+            return
         if not self.player.company:
             messagebox.showinfo("Company required", "Create a company before investing.", parent=self)
             return
@@ -494,6 +639,9 @@ class BankingLifeSim(tk.Tk):
         self.show_dashboard()
 
     def show_stocks(self):
+        if not self._is_adult():
+            self._show_locked("Stock market")
+            return
         self._clear("Stock market")
         card = self._card(self.content); card.pack(fill="both", expand=True)
         filters = tk.Frame(card, bg=C["white"])
@@ -558,6 +706,9 @@ class BankingLifeSim(tk.Tk):
         messagebox.showinfo(stock.name, f"Price: ${stock.price:,.2f}\nRevenue: ${stock.revenue:,.0f}\nProfit: ${stock.profit:,.0f}\nDebt: ${stock.debt:,.0f}\nGrowth: {stock.growth_rate:.1%}\nOwned shares: {owned}")
 
     def trade_stock(self, action):
+        if not self._is_adult():
+            self._show_locked("Stock market")
+            return
         selected = self.stock_table.selection()
         if not selected:
             messagebox.showwarning("Select a stock", "Select a stock before trading.", parent=self)
@@ -572,6 +723,9 @@ class BankingLifeSim(tk.Tk):
         self.show_stocks()
 
     def show_portfolio(self):
+        if not self._is_adult():
+            self._show_locked("Portfolio")
+            return
         self._clear("Your portfolio")
         card = self._card(self.content); card.pack(fill="both", expand=True)
         tk.Label(card, text=f"Portfolio value  ${self.market.portfolio_value(self.player):,.2f}", bg=C["white"], fg=C["ink"], font=("Segoe UI", 18, "bold")).pack(anchor="w", padx=24, pady=22)

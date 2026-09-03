@@ -1,11 +1,13 @@
 import random
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from company_class import Company
 from competitors import CompetitorRegistry
 from create_product import Product
+from events import EventManager
 from persistence import load_game, save_game
 from player_class import Player
 from stock_market import StockMarket
@@ -58,7 +60,33 @@ class CoreGameTests(unittest.TestCase):
     def test_player_uses_one_bank_balance(self):
         player = Player()
         self.assertFalse(hasattr(player, "cash"))
-        self.assertEqual(player.bank, 100000.0)
+        self.assertEqual(player.bank, 900000.0)
+
+    def test_player_starts_at_age_one_and_ages_with_years(self):
+        player = Player()
+        self.assertEqual(player.age, 1)
+        player.advance_year()
+        self.assertEqual(player.age, 2)
+
+    def test_events_are_filtered_by_age_and_apply_choice(self):
+        manager = EventManager()
+        player = Player()
+        with patch("events.random.random", return_value=0.0):
+            event = manager.event_for_age(3)
+        self.assertIsNotNone(event)
+        assert event is not None
+        self.assertTrue(event["age_range"][0] <= 3 <= event["age_range"][1])
+        before = {
+            "bank": player.bank,
+            "health": player.health,
+            "happiness": player.happiness,
+            "smarts": player.smarts,
+            "relationships": player.relationships,
+        }
+        result = manager.resolve(player, event, 0)
+        self.assertEqual(len(player.event_history), 1)
+        self.assertEqual(result["choice"], manager.choices_for(event)[0][0])
+        self.assertTrue(any(getattr(player, field) != value for field, value in before.items()))
 
     def test_annual_run_is_idempotent_for_same_year(self):
         random.seed(7)

@@ -6,6 +6,12 @@ from company_class import Company
 class Player:
     def __init__(self):
         self.bank: float = 900000.0
+        self.age = 1
+        self.health = 100
+        self.happiness = 50
+        self.smarts = 50
+        self.relationships = 50
+        self.event_history = []
         self.year = 2000
         self.month = 1
         self.day = 1
@@ -52,4 +58,5 @@ class Player:
     def advance_year(self):
         self.month = 1
         self.day = 1
+        self.age += 1
         self.year += 1

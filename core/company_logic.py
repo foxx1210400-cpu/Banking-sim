@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import random
-from config import (
+from .config import (
     EMPLOYEE_ANNUAL_COST,
     EMPLOYEES_PER_FACTORY,
     EMPLOYEES_PER_PRODUCT,
@@ -12,7 +12,7 @@ from config import (
     PRICE_ELASTICITY,
     TAX_RATE,
 )
-from logger import logger
+from .logger import logger
 
 
 def clamp(value, minimum, maximum):

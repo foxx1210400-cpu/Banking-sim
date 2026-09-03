@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from company_class import Company
+from .company_class import Company
 
 
 class Player:

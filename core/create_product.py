@@ -2,7 +2,8 @@ import json
 from functools import lru_cache
 from pathlib import Path
 
-from logger import logger
+from .config import DATA_DIR
+from .logger import logger
 
 
 RESEARCH_COST_MULTIPLIER = 0.2
@@ -122,8 +123,8 @@ class Product:
 
     @staticmethod
     @lru_cache(maxsize=4)
-    def load_catalog(path="company_products.json"):
-        data_file = Path(path)
+    def load_catalog(path=None):
+        data_file = Path(path) if path else DATA_DIR / "company_products.json"
         if not data_file.exists():
             return {}
 
@@ -173,10 +174,10 @@ class ProductCreator:
         )
 
     @staticmethod
-    def load_catalog(path="company_products.json"):
+    def load_catalog(path=None):
         return Product.load_catalog(path)
 
     @staticmethod
-    def load_sector_products(sector, path="company_products.json"):
+    def load_sector_products(sector, path=None):
         catalog = Product.load_catalog(path)
         return catalog.get(sector, [])

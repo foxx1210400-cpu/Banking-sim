@@ -1,10 +1,10 @@
-from option_function import view_bank_account, apply_to_jobs
-from player_class import Player
-from stock_market import StockMarket
-from company_class import Company
-from create_product import ProductCreator
-from config import SECTOR_STARTUP_COSTS
-from logger import logger
+from core.option_function import view_bank_account, apply_to_jobs
+from core.player_class import Player
+from core.stock_market import StockMarket
+from core.company_class import Company
+from core.create_product import ProductCreator
+from core.config import SECTOR_STARTUP_COSTS
+from core.logger import logger
 
 market = StockMarket()
 STARTUP_COSTS = SECTOR_STARTUP_COSTS

@@ -35,7 +35,7 @@
 
 import random
 import math
-from config import MAX_REVENUE, MIN_REVENUE, VOLATILITY_ANNUAL_SCALE, VOLATILITY_DAILY_SCALE
+from .config import MAX_REVENUE, MIN_REVENUE, VOLATILITY_ANNUAL_SCALE, VOLATILITY_DAILY_SCALE
 
 class Stock:
     def __init__(

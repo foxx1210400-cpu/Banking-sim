@@ -4,13 +4,13 @@ from unittest.mock import patch
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from company_class import Company
-from competitors import CompetitorRegistry
-from create_product import Product
-from events import EventManager
-from persistence import load_game, save_game
-from player_class import Player
-from stock_market import StockMarket
+from core.company_class import Company
+from core.competitors import CompetitorRegistry
+from core.create_product import Product
+from core.events import EventManager
+from core.persistence import load_game, save_game
+from core.player_class import Player
+from core.stock_market import StockMarket
 
 
 class CoreGameTests(unittest.TestCase):
@@ -71,7 +71,7 @@ class CoreGameTests(unittest.TestCase):
     def test_events_are_filtered_by_age_and_apply_choice(self):
         manager = EventManager()
         player = Player()
-        with patch("events.random.random", return_value=0.0):
+        with patch("core.events.random.random", return_value=0.0):
             event = manager.event_for_age(3)
         self.assertIsNotNone(event)
         assert event is not None

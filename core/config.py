@@ -1,3 +1,10 @@
+from pathlib import Path
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+
+
 SECTOR_STARTUP_COSTS = {
     "Technology": 250000,
     "Finance": 150000,

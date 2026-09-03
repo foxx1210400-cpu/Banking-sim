@@ -1,15 +1,15 @@
 from typing import Any
 
-from create_product import ProductCreator
-from company_logic import simulate_company_year
-from config import (
+from .create_product import ProductCreator
+from .company_logic import simulate_company_year
+from .config import (
     EMPLOYEES_PER_FACTORY,
     EMPLOYEES_PER_PRODUCT,
     FACTORY_ANNUAL_MAINTENANCE,
     FACTORY_CAPACITY,
     FACTORY_COST,
 )
-from logger import logger
+from .logger import logger
 
 
 class Company:

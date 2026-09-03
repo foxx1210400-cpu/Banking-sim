@@ -1,12 +1,12 @@
 import sys
 import random
 import py_compile
-from company_class import Company
-from create_product import Product
+from core.company_class import Company
+from core.create_product import Product
 
 def run_validation():
     print("--- 1. Compilation Verification ---")
-    files_to_compile = ["company_logic.py", "company_class.py", "ui/gui_main.py"]
+    files_to_compile = ["core/company_logic.py", "core/company_class.py", "ui/gui_main.py"]
     for file in files_to_compile:
         try:
             py_compile.compile(file, doraise=True)

@@ -1,14 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
 
-from company_class import Company
-from config import SAVE_FILE, SECTOR_STARTUP_COSTS
-from create_product import ProductCreator
-from events import EventManager
-from logger import logger
-from persistence import load_game, save_game
-from player_class import Player
-from stock_market import StockMarket
+from core.company_class import Company
+from core.config import SAVE_FILE, SECTOR_STARTUP_COSTS
+from core.create_product import ProductCreator
+from core.events import EventManager
+from core.logger import logger
+from core.persistence import load_game, save_game
+from core.player_class import Player
+from core.stock_market import StockMarket
 
 C = {"navy": "#10263d", "blue": "#183b5b", "ink": "#17212b", "muted": "#718096",
      "line": "#e5eaf0", "paper": "#f5f7fa", "white": "#ffffff", "green": "#16845b",

@@ -5,8 +5,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from .config import DATA_DIR
+
 if TYPE_CHECKING:
-    from player_class import Player
+    from .player_class import Player
 
 
 @dataclass(frozen=True)
@@ -38,7 +40,7 @@ class CompetitorRegistry:
     """Loads rivals and selects those relevant to a player's company."""
 
     def __init__(self, data_file: Path | None = None):
-        self.data_file = data_file or Path(__file__).with_name("Enemy_companies.json")
+        self.data_file = data_file or DATA_DIR / "Enemy_companies.json"
         self.companies_by_sector = self._load()
 
     def _load(self) -> dict[str, tuple[EnemyCompany, ...]]:

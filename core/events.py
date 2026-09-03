@@ -4,6 +4,8 @@ import json
 import random
 from pathlib import Path
 
+from .config import DATA_DIR
+
 
 CHOICES = {
     "childhood": (
@@ -55,7 +57,7 @@ CHOICES = {
 
 class EventManager:
     def __init__(self, path: str | Path | None = None):
-        self.path = Path(path) if path else Path(__file__).with_name("events.json")
+        self.path = Path(path) if path else DATA_DIR / "events.json"
         self.events = self._load_events()
 
     def _load_events(self):

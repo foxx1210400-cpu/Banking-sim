@@ -1,6 +1,6 @@
 from Startup import game_loop
-from player_class import Player
-from logger import logger
+from core.player_class import Player
+from core.logger import logger
 
 
 if __name__ == "__main__":

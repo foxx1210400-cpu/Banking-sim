@@ -1,10 +1,10 @@
 import json
 from pathlib import Path
 
-from company_class import Company
-from create_product import Product
-from player_class import Player
-from stock_class import Stock
+from .company_class import Company
+from .create_product import Product
+from .player_class import Player
+from .stock_class import Stock
 
 
 def _product_to_dict(product):
@@ -129,7 +129,7 @@ def load_game(filename: str | Path = "savegame.json"):
             company.products.append(product)
         player.company = company
 
-    from stock_market import StockMarket
+    from .stock_market import StockMarket
     market = StockMarket()
     for ticker, item in data.get("stocks", {}).items():
         if ticker not in market.stocks:

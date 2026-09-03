@@ -1,9 +1,9 @@
 import json
 import random
 from pathlib import Path
-from stock_class import Stock
-from config import STOCK_TRANSACTION_TAX_RATE
-from logger import logger
+from .stock_class import Stock
+from .config import DATA_DIR, STOCK_TRANSACTION_TAX_RATE
+from .logger import logger
 
 class StockMarket:
     def __init__(self):
@@ -12,7 +12,7 @@ class StockMarket:
         self.load_stocks()
 
     def load_stocks(self):
-        data_file = Path(__file__).with_name("stocks.json")
+        data_file = DATA_DIR / "stocks.json"
         try:
             with data_file.open("r", encoding="utf-8") as f:
                 data = json.load(f)

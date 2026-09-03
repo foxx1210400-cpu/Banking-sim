@@ -1,10 +1,10 @@
 ﻿import tkinter as tk
 from tkinter import simpledialog
 
-from company_class import Company
-from create_product import ProductCreator
-from player_class import Player
-from stock_market import StockMarket
+from core.company_class import Company
+from core.create_product import ProductCreator
+from core.player_class import Player
+from core.stock_market import StockMarket
 from ui.gui_components import make_button, write_to_textbox
 from ui.gui_ticker import build_ticker
 

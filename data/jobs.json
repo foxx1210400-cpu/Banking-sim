@@ -1,0 +1,225 @@
+{
+  "jobs": [
+    {
+      "id": 1,
+      "title": "Fast Food Crew Member",
+      "min_age": 14,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Entry-level teen job"
+    },
+    {
+      "id": 2,
+      "title": "Grocery Bagger",
+      "min_age": 14,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Part-time allowed"
+    },
+    {
+      "id": 3,
+      "title": "Dishwasher",
+      "min_age": 14,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Common first job"
+    },
+    {
+      "id": 4,
+      "title": "Busser",
+      "min_age": 14,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Restaurant support role"
+    },
+    {
+      "id": 5,
+      "title": "Ice Cream Shop Worker",
+      "min_age": 14,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Seasonal job"
+    },
+    {
+      "id": 6,
+      "title": "Movie Theater Usher",
+      "min_age": 15,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Evening shifts"
+    },
+    {
+      "id": 7,
+      "title": "Retail Stocker",
+      "min_age": 16,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Light lifting required"
+    },
+    {
+      "id": 8,
+      "title": "Cashier",
+      "min_age": 16,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Basic math skills"
+    },
+    {
+      "id": 9,
+      "title": "Car Wash Attendant",
+      "min_age": 16,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Outdoor work"
+    },
+    {
+      "id": 10,
+      "title": "Library Assistant",
+      "min_age": 16,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Quiet environment"
+    },
+    {
+      "id": 11,
+      "title": "Paper Boy",
+      "min_age": 14,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "hourly_wage": 10.5,
+      "notes": "Early morning delivery route"
+    },
+    {
+      "id": 12,
+      "title": "Game Tester",
+      "min_age": 14,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "hourly_wage": 12.0,
+      "notes": "Test games and report bugs"
+    },
+
+    {
+      "id": 40,
+      "title": "Amusement Park Ride Operator",
+      "min_age": 17,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": "Safety Training",
+      "notes": "Seasonal job"
+    },
+
+    {
+      "id": 41,
+      "title": "Warehouse Worker",
+      "min_age": 18,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": null,
+      "notes": "Heavy lifting"
+    },
+    {
+      "id": 42,
+      "title": "Delivery Driver",
+      "min_age": 18,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": "Driver's License",
+      "notes": "Clean driving record required"
+    },
+    {
+      "id": 43,
+      "title": "Construction Laborer",
+      "min_age": 18,
+      "experience_required": 0,
+      "degree_required": null,
+      "cert_required": "OSHA-10",
+      "notes": "Outdoor physical work"
+    },
+    {
+      "id": 44,
+      "title": "Security Guard",
+      "min_age": 18,
+      "experience_required": 1,
+      "degree_required": null,
+      "cert_required": "Security License",
+      "notes": "Background check required"
+    },
+    {
+      "id": 45,
+      "title": "Bank Teller",
+      "min_age": 18,
+      "experience_required": 1,
+      "degree_required": "High School Diploma",
+      "cert_required": null,
+      "notes": "Customer service skills"
+    },
+    {
+      "id": 46,
+      "title": "IT Support Technician",
+      "min_age": 18,
+      "experience_required": 1,
+      "degree_required": "Associate's in IT",
+      "cert_required": "CompTIA A+",
+      "notes": "Entry-level tech job"
+    },
+    {
+      "id": 47,
+      "title": "Software Developer",
+      "min_age": 18,
+      "experience_required": 2,
+      "degree_required": "Bachelor's in Computer Science",
+      "cert_required": null,
+      "notes": "Programming required"
+    },
+    {
+      "id": 48,
+      "title": "Registered Nurse",
+      "min_age": 18,
+      "experience_required": 0,
+      "degree_required": "Bachelor's in Nursing",
+      "cert_required": "RN License",
+      "notes": "Medical field"
+    },
+    {
+      "id": 49,
+      "title": "Electrician",
+      "min_age": 18,
+      "experience_required": 4,
+      "degree_required": null,
+      "cert_required": "Apprenticeship Completion",
+      "notes": "Skilled trade"
+    },
+    {
+      "id": 50,
+      "title": "Police Officer",
+      "min_age": 21,
+      "experience_required": 0,
+      "degree_required": "High School Diploma",
+      "cert_required": "Police Academy",
+      "notes": "Background check required"
+    },
+
+    {
+      "id": 160,
+      "title": "Chief Technology Officer",
+      "min_age": 30,
+      "experience_required": 12,
+      "degree_required": "Master's in Computer Science",
+      "cert_required": null,
+      "notes": "Executive leadership role"
+    }
+  ]
+}

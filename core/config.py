@@ -3,6 +3,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
+APP_VERSION = "beta2.0.0"
 
 
 SECTOR_STARTUP_COSTS = {

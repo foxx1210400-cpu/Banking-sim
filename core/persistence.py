@@ -78,14 +78,25 @@ def _stock_to_dict(stock):
 
 def save_game(player, market, filename: str | Path = "savegame.json"):
     data = {
-        "version": 1,
+        "version": "beta2.0.0",
         "player": {
             "bank": player.bank,
             "age": player.age,
             "health": player.health,
             "happiness": player.happiness,
             "smarts": player.smarts,
+            "grades": player.grades,
+            "last_study_year": player.last_study_year,
             "relationships": player.relationships,
+            "family": player.family,
+            "job": player.job,
+            "job_experience": player.job_experience,
+            "last_salary": player.last_salary,
+            "last_taxes": player.last_taxes,
+            "college_enrolled": player.college_enrolled,
+            "college_years": player.college_years,
+            "college_degree": player.college_degree,
+            "activity_history": player.activity_history,
             "event_history": player.event_history,
             "year": player.year,
             "month": player.month,
@@ -102,7 +113,7 @@ def load_game(filename: str | Path = "savegame.json"):
     data = json.loads(Path(filename).read_text(encoding="utf-8"))
     player_data = data["player"]
     player = Player()
-    for field in ("bank", "age", "health", "happiness", "smarts", "relationships", "event_history", "year", "month", "day", "portfolio"):
+    for field in ("bank", "age", "health", "happiness", "smarts", "grades", "last_study_year", "relationships", "family", "job", "job_experience", "last_salary", "last_taxes", "college_enrolled", "college_years", "college_degree", "activity_history", "event_history", "year", "month", "day", "portfolio"):
         if field in player_data:
             setattr(player, field, player_data[field])
     if "age" not in player_data:

@@ -5,15 +5,20 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from core.company_class import Company
+from core.config import APP_VERSION
 from core.competitors import CompetitorRegistry
 from core.create_product import Product
 from core.events import EventManager
+from core.jobs import JobCatalog
 from core.persistence import load_game, save_game
 from core.player_class import Player
 from core.stock_market import StockMarket
 
 
 class CoreGameTests(unittest.TestCase):
+    def test_release_version_is_declared(self):
+        self.assertEqual(APP_VERSION, "beta2.0.0")
+
     def test_understaffing_reduces_capacity_and_payroll_uses_actual_workforce(self):
         company = Company("Lean Co", "Food")
         company.cash = 1_000_000
@@ -60,13 +65,96 @@ class CoreGameTests(unittest.TestCase):
     def test_player_uses_one_bank_balance(self):
         player = Player()
         self.assertFalse(hasattr(player, "cash"))
-        self.assertEqual(player.bank, 900000.0)
+        self.assertEqual(player.bank, 0.0)
+
+    def test_job_salary_is_paid_annually_after_taxes(self):
+        player = Player()
+        player.age = 14
+        player.job = JobCatalog().available_for(14)[0]
+        player.advance_year()
+        salary = player.job["hourly_wage"] * 2_000
+        self.assertEqual(player.last_salary, salary)
+        self.assertEqual(player.bank, salary - player.last_taxes)
+        self.assertGreaterEqual(player.last_taxes, 0)
+
+    def test_activity_history_records_player_actions(self):
+        player = Player()
+        player.age = 10
+        player.study_harder()
+        player.advance_year()
+        self.assertTrue(any("Studied harder" in item for item in player.activity_history))
+        self.assertTrue(any("Aged up to 11" in item for item in player.activity_history))
+
+    def test_activity_history_persists_through_save_load(self):
+        player = Player()
+        player.record_activity("Checked the activity feed.")
+        with TemporaryDirectory() as folder:
+            path = Path(folder) / "save.json"
+            save_game(player, StockMarket(), path)
+            loaded_player, _ = load_game(path)
+        self.assertEqual(loaded_player.activity_history, player.activity_history)
+
+    def test_college_tuition_and_graduation(self):
+        player = Player()
+        player.age = 18
+        player.college_enrolled = True
+        for _ in range(4):
+            player.advance_year()
+        self.assertFalse(player.college_enrolled)
+        self.assertEqual(player.college_degree, "Bachelor's Degree")
+        self.assertEqual(player.bank, -60_000)
 
     def test_player_starts_at_age_one_and_ages_with_years(self):
         player = Player()
         self.assertEqual(player.age, 1)
         player.advance_year()
         self.assertEqual(player.age, 2)
+
+    def test_family_is_generated_with_expected_details(self):
+        family = Player().family
+        self.assertEqual(len(family["parents"]), 2)
+        self.assertGreater(family["annual_income"], 0)
+        self.assertGreater(family["assets"], 0)
+        self.assertIn(family["home"], {"Apartment", "Townhouse", "Family home"})
+
+    def test_jobs_catalog_unlocks_teen_jobs_at_fourteen(self):
+        jobs = JobCatalog().available_for(14)
+        titles = {job["title"] for job in jobs}
+        self.assertIn("Game Tester", titles)
+        self.assertIn("Paper Boy", titles)
+        self.assertTrue(all(job["hourly_wage"] > 0 for job in jobs))
+
+    def test_school_level_matches_age_range(self):
+        player = Player()
+        for age, school in ((4, None), (5, "Elementary School"), (10, "Elementary School"), (11, "Middle School"), (13, "Middle School"), (14, "High School"), (18, "High School"), (19, None)):
+            player.age = age
+            self.assertEqual(player.school_level(), school)
+
+    def test_studying_improves_grades_without_exceeding_maximum(self):
+        player = Player()
+        player.age = 10
+        player.grades = 98
+        player.study_harder()
+        self.assertEqual(player.grades, 100)
+        player.study_harder()
+        self.assertEqual(player.grades, 100)
+
+    def test_studying_is_limited_to_once_per_year(self):
+        player = Player()
+        player.age = 10
+        grades_before = player.grades
+        self.assertTrue(player.study_harder())
+        self.assertFalse(player.study_harder())
+        self.assertEqual(player.grades, grades_before + 5)
+        player.advance_year()
+        self.assertTrue(player.study_harder())
+
+    def test_studying_is_unavailable_outside_school_ages(self):
+        player = Player()
+        player.age = 4
+        grades_before = player.grades
+        self.assertFalse(player.study_harder())
+        self.assertEqual(player.grades, grades_before)
 
     def test_events_are_filtered_by_age_and_apply_choice(self):
         manager = EventManager()
@@ -86,7 +174,23 @@ class CoreGameTests(unittest.TestCase):
         result = manager.resolve(player, event, 0)
         self.assertEqual(len(player.event_history), 1)
         self.assertEqual(result["choice"], manager.choices_for(event)[0][0])
+        self.assertIn("You decided to", result["narrative"])
+        self.assertIn(result["narrative"], player.activity_history[-1])
         self.assertTrue(any(getattr(player, field) != value for field, value in before.items()))
+
+    def test_resolved_events_are_not_selected_again(self):
+        manager = EventManager()
+        player = Player()
+        player.age = 3
+        with patch("core.events.random.random", return_value=0.0), patch("core.events.random.choice", side_effect=lambda events: events[0]):
+            first_event = manager.event_for_age(player.age, player.event_history)
+            self.assertIsNotNone(first_event)
+            assert first_event is not None
+            manager.resolve(player, first_event, 0)
+            next_event = manager.event_for_age(player.age, player.event_history)
+        self.assertIsNotNone(next_event)
+        assert next_event is not None
+        self.assertNotEqual(next_event["id"], first_event["id"])
 
     def test_annual_run_is_idempotent_for_same_year(self):
         random.seed(7)
@@ -104,7 +208,10 @@ class CoreGameTests(unittest.TestCase):
     def test_save_load_preserves_player_state(self):
         player = Player()
         player.bank = 5000
+        player.age = 10
         player.year = 2005
+        player.grades = 87
+        player.study_harder()
         market = StockMarket()
         with TemporaryDirectory() as folder:
             path = Path(folder) / "save.json"
@@ -112,6 +219,8 @@ class CoreGameTests(unittest.TestCase):
             loaded_player, _ = load_game(path)
         self.assertEqual(loaded_player.bank, 5000)
         self.assertEqual(loaded_player.year, 2005)
+        self.assertEqual(loaded_player.grades, 92)
+        self.assertEqual(loaded_player.last_study_year, player.year)
 
     def test_save_load_preserves_employee_count(self):
         player = Player()

@@ -75,7 +75,7 @@ class EventManager:
             and len(age_range) == 2
         )
 
-    def event_for_age(self, age: int):
+    def event_for_age(self, age: int, event_history=None):
         if age <= 12:
             event_chance = 1 / 3
         elif age < 18:
@@ -84,13 +84,23 @@ class EventManager:
             event_chance = 1 / 8
         if random.random() >= event_chance:
             return None
-        eligible = [event for event in self.events if event["age_range"][0] <= age <= event["age_range"][1]]
+        seen_event_ids = {item.get("event_id") for item in (event_history or [])}
+        eligible = [
+            event for event in self.events
+            if event["age_range"][0] <= age <= event["age_range"][1]
+            and event["id"] not in seen_event_ids
+        ]
         if not eligible:
             return None
         return random.choice(eligible)
 
     def choices_for(self, event):
         return CHOICES.get(event["category"], CHOICES["random"])
+
+    @staticmethod
+    def narrative_for(event, choice):
+        description = event["description"].rstrip(".")
+        return f"{description}. You decided to {choice.lower().rstrip('.')}."
 
     @staticmethod
     def apply_choice(player, effects):
@@ -113,5 +123,7 @@ class EventManager:
             "choice": label,
             "effects": effects,
         }
+        result["narrative"] = self.narrative_for(event, label)
         player.event_history.append(result)
+        player.record_activity(result["narrative"])
         return result

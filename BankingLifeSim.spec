@@ -1,11 +1,8 @@
-# -*- mode: python ; coding: utf-8 -*-
-
-
 a = Analysis(
-    ['main.py'],
-    pathex=[],
+    ['ui/gui_main.py'],
+    pathex=['.'],
     binaries=[],
-    datas=[('stocks.json', '.')],
+    datas=[('data', 'data')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
